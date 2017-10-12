@@ -20,12 +20,12 @@ public class ProductTypeService {
 		this.productTypeRepository = productTypeRepository;
 	}
 	
-	public void addProductType(ProductType productType) {
-		productTypeRepository.save(productType);
+	public ProductType addProductType(ProductType productType) {
+		return productTypeRepository.save(productType);
 	}
 	
-	public void saveProductType(ProductType productType) {
-		productTypeRepository.save(productType);
+	public ProductType saveProductType(ProductType productType) {
+		return productTypeRepository.save(productType);
 	}
 	
 	//basic searches

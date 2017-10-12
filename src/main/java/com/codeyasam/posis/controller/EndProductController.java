@@ -28,8 +28,14 @@ public class EndProductController {
 	
 	@RequestMapping(value="/", method=RequestMethod.PUT)
 	public ResponseEntity<?> addProduct(@RequestBody EndProduct product) {
-		endProductService.addProduct(product);
+		product = endProductService.addProduct(product);
 		return new ResponseEntity<EndProduct>(product, HttpStatus.CREATED);
+	}
+	
+	@RequestMapping(value="/", method=RequestMethod.POST)
+	public ResponseEntity<?> saveProduct(@RequestBody EndProduct product) {
+		product = endProductService.saveProduct(product);
+		return new ResponseEntity<EndProduct>(product, HttpStatus.OK);
 	}
 	
 }

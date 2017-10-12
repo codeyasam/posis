@@ -22,12 +22,12 @@ public class EndProductService {
 		this.endProductRepository = endProductRepository;
 	}
 	
-	public void addProduct(EndProduct product) {
-		endProductRepository.save(product);
+	public EndProduct addProduct(EndProduct product) {
+		return endProductRepository.save(product);
 	}
 	
-	public void saveProduct(EndProduct product) {
-		endProductRepository.save(product);
+	public EndProduct saveProduct(EndProduct product) {
+		return endProductRepository.save(product);
 	}
 	
 	//product basic searches
