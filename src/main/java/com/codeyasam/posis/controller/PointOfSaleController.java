@@ -1,8 +1,11 @@
 package com.codeyasam.posis.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,5 +33,15 @@ public class PointOfSaleController {
 	public ResponseEntity<?> addPointOfSale(@RequestBody PointOfSale pointOfSale) {
 		pointOfSale = pointOfSaleService.addPointOfSale(pointOfSale);
 		return new ResponseEntity<PointOfSale>(pointOfSale, HttpStatus.CREATED);
+	}
+	
+	@RequestMapping(value="/", method=RequestMethod.GET)
+	public List<PointOfSale> retrieveAllPointOfSale() {
+		return pointOfSaleService.retrieveAllPointOfSale();
+	}
+	
+	@RequestMapping(value="/searchByProductId/{productId}", method=RequestMethod.GET)
+	public List<PointOfSale> retrieveByProductId(@PathVariable long productId) {
+		return pointOfSaleService.retrieveByProductId(productId);
 	}
 }

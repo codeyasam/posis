@@ -37,6 +37,12 @@ public class TestController {
 		pointOfSaleService.addPointOfSale(pointOfSale);
 	}
 	
+	@RequestMapping("/testing")
+	public void testing() {
+		EndProduct endProduct = endProductService.retrieveByName("tigernu");
+		endProduct.getProductType();
+	}
+	
 	@RequestMapping("/endProduct/{name}")
 	public EndProduct retrieveEndProduct(@PathVariable String name) {
 		return endProductService.retrieveByName(name);

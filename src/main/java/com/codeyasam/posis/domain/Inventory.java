@@ -1,11 +1,9 @@
 package com.codeyasam.posis.domain;
 
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
@@ -16,9 +14,9 @@ public class Inventory {
 	@Id
 	@GeneratedValue
 	private long id;
-	
-	@OneToMany
-	private List<EndProduct> product;
+
+	@ManyToOne
+	private EndProduct product;
 	
 	@Min(value=0)
 	private int stockQuantity;
@@ -40,14 +38,6 @@ public class Inventory {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public List<EndProduct> getProduct() {
-		return product;
-	}
-
-	public void setProduct(List<EndProduct> product) {
-		this.product = product;
 	}
 
 	public int getStockQuantity() {
@@ -72,5 +62,13 @@ public class Inventory {
 
 	public void setSellingPrice(double sellingPrice) {
 		this.sellingPrice = sellingPrice;
+	}	
+	
+	public EndProduct getProduct() {
+		return product;
+	}
+
+	public void setProduct(EndProduct product) {
+		this.product = product;
 	}	
 }

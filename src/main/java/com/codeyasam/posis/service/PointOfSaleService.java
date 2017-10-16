@@ -1,5 +1,8 @@
 package com.codeyasam.posis.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,17 +30,35 @@ public class PointOfSaleService {
 	
 	@Transactional
 	public PointOfSale addPointOfSale(PointOfSale pointOfSale) {
-		pointOfSale = posRepository.save(pointOfSale);
+		pointOfSale = savePOS(pointOfSale);
 		long inventoryId = pointOfSale.getInventory().getId();
-		Inventory inventory = inventoryRepository.findOne(inventoryId);
+		Inventory inventory = inventoryRepository.findById(inventoryId);
 		inventory.setStockQuantity(getRemainingStock(inventory, pointOfSale));
 		inventoryRepository.save(inventory);
 		return posRepository.findOne(pointOfSale.getId());
 	}
 	
-	private int getRemainingStock(Inventory inventory, PointOfSale pointOfSale) {
+	public PointOfSale savePOS(PointOfSale pointOfSale) {
+		return posRepository.save(pointOfSale);
+	}
+	
+	public PointOfSale retrieveById(long id) {
+		return posRepository.findOne(id);
+	}
+	
+	public int getRemainingStock(Inventory inventory, PointOfSale pointOfSale) {
 		int stockQuantity = inventory.getStockQuantity();
 		int itemQuantity  = pointOfSale.getProductQuantity();
 		return stockQuantity - itemQuantity;		
+	}
+	
+	public List<PointOfSale> retrieveAllPointOfSale() {
+		List<PointOfSale> allPointSale = new ArrayList<>();
+		posRepository.findAll().forEach(allPointSale::add);
+		return allPointSale;
+	}
+	
+	public List<PointOfSale> retrieveByProductId(long productId) {
+		return posRepository.findByInventoryProductId(productId);
 	}
 }

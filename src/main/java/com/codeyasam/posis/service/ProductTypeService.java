@@ -1,5 +1,8 @@
 package com.codeyasam.posis.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +36,13 @@ public class ProductTypeService {
 		return productTypeRepository.findByName(name);
 	}
 	
-	public ProductType retrieveByTypeNameContaining(String text) {
+	public List<ProductType> retrieveByTypeNameContaining(String text) {
 		return productTypeRepository.findByNameContaining(text);
+	}
+	
+	public List<ProductType> retrieveAllProductType() {
+		List<ProductType> allProductType = new ArrayList<>();
+		productTypeRepository.findAll().forEach(allProductType::add);
+		return allProductType;
 	}
 }

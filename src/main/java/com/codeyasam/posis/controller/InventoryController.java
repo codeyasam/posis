@@ -1,8 +1,11 @@
 package com.codeyasam.posis.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,7 +37,23 @@ public class InventoryController {
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
 	public ResponseEntity<?> saveInventory(@RequestBody Inventory inventory) {
+		inventory = inventoryService.saveInventory(inventory);
 		return new ResponseEntity<Inventory>(inventory, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	public List<Inventory> retriveByProductId(@PathVariable long id) {
+		return inventoryService.retrieveByProductId(id);
+	}
+	
+	@RequestMapping(value="/searchByProductName/{name}")
+	public List<Inventory> retrieveByProductName(@PathVariable String name) {
+		return inventoryService.retrieveByProductName(name);
+	}
+	
+	@RequestMapping(value="/", method=RequestMethod.GET)
+	public List<Inventory> retrieveAllInventory() {
+		return inventoryService.retrieveAllInventory();
 	}
 	
 }

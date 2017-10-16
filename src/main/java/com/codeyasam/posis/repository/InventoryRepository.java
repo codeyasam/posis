@@ -9,5 +9,7 @@ import com.codeyasam.posis.domain.Inventory;
 public interface InventoryRepository extends PagingAndSortingRepository<Inventory, Long> {
 	
 	public List<Inventory> findByProductId(long id);
+	public List<Inventory> findByProductName(String name);
+	public Inventory findById(long id);
 	
 }
