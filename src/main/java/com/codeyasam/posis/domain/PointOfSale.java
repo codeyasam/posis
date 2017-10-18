@@ -9,8 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.userdetails.User;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -28,6 +30,9 @@ public class PointOfSale {
 	
 	@CreatedDate
 	private LocalDateTime createdDate;
+	
+	@CreatedBy
+	private User createdBy;
 
 	public long getId() {
 		return id;
@@ -59,6 +64,20 @@ public class PointOfSale {
 
 	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	/**
+	 * @return the createdBy
+	 */
+	public User getCreatedBy() {
+		return createdBy;
+	}
+
+	/**
+	 * @param createdBy the createdBy to set
+	 */
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
 	}	
 	
 }

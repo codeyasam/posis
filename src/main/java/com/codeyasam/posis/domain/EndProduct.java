@@ -26,6 +26,12 @@ public class EndProduct {
 		this.id = id;
 	}
 	
+	public EndProduct(long id, String name, ProductType productType) {
+		this.id = id;
+		this.name = name;
+		this.productType = productType;
+	}
+	
 	public long getId() {
 		return id;
 	}
@@ -48,6 +54,11 @@ public class EndProduct {
 
 	public void setProductType(ProductType productType) {
 		this.productType = productType;
+	}
+
+	@Override
+	public String toString() {
+		return "EndProduct [id=" + id + ", name=" + name + ", productType=" + productType + "]";
 	}
 	
 }
