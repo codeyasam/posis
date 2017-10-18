@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.codeyasam.posis.domain.EndProduct;
@@ -47,6 +48,12 @@ public class EndProductService {
 	public List<EndProduct> retrieveAllProduct() {
 		List<EndProduct> allProducts = new ArrayList<>();
 		endProductRepository.findAll().forEach(allProducts::add);
+		return allProducts;
+	}
+	
+	public List<EndProduct> retrieveAllProduct(Pageable pageable) {
+		List<EndProduct> allProducts = new ArrayList<>();
+		endProductRepository.findAll(pageable).forEach(allProducts::add);
 		return allProducts;
 	}
 }
