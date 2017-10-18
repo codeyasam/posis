@@ -1,5 +1,6 @@
 package com.codeyasam.posis.test.service;
 
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,8 +23,9 @@ public class EndProductServiceTest {
 		endProductRepositoryMock = Mockito.mock(EndProductRepository.class);
 		productTypeRepositoryMock = Mockito.mock(ProductTypeRepository.class);
 		endProductService = new EndProductService(endProductRepositoryMock);
-		
+	
 		setupMockedEndProductType();
+		setupMockedEndProduct();
 	}
 	
 	public void setupMockedEndProductType() {
@@ -45,10 +47,14 @@ public class EndProductServiceTest {
 			.thenReturn(endProduct);
 	}
 	
+	
 	@Test
 	public void addProduct() {
 		EndProduct endProduct = endProductService.addProduct(new EndProduct());
 		Assert.assertEquals(endProduct.getName(), "New Product");
 		Assert.assertEquals(endProduct.getProductType().getProductType(), "sampleProductType");
 	}
+	
+	
+
 }
