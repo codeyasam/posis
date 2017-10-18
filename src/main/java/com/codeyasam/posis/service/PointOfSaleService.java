@@ -30,12 +30,12 @@ public class PointOfSaleService {
 	
 	@Transactional
 	public PointOfSale addPointOfSale(PointOfSale pointOfSale) {
-		pointOfSale = savePOS(pointOfSale);
 		long inventoryId = pointOfSale.getInventory().getId();
 		Inventory inventory = inventoryRepository.findById(inventoryId);
 		inventory.setStockQuantity(getRemainingStock(inventory, pointOfSale));
 		inventoryRepository.save(inventory);
-		return posRepository.findOne(pointOfSale.getId());
+		pointOfSale.setInventory(inventory);
+		return posRepository.save(pointOfSale);
 	}
 	
 	public PointOfSale savePOS(PointOfSale pointOfSale) {
