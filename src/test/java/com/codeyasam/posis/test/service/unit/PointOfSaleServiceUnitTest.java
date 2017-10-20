@@ -1,4 +1,4 @@
-package com.codeyasam.posis.test.service;
+package com.codeyasam.posis.test.service.unit;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,7 +13,7 @@ import com.codeyasam.posis.service.InventoryService;
 import com.codeyasam.posis.service.PointOfSaleService;
 
 
-public class PointOfSaleServiceTest {
+public class PointOfSaleServiceUnitTest {
 	
 	private PointOfSaleService pointOfSaleService;
 	private PointOfSaleRepository pointOfSaleRepositoryMock;

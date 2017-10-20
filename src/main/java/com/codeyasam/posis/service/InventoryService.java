@@ -2,8 +2,10 @@ package com.codeyasam.posis.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.codeyasam.posis.domain.Inventory;
@@ -47,6 +49,15 @@ public class InventoryService {
 		List<Inventory> allInventory = new ArrayList<>();
 		inventoryRepository.findAll().forEach(allInventory::add);
 		return allInventory;
+	}
+	
+	public List<Inventory> retrieveAllInventory(Pageable pageable) {
+		return inventoryRepository.findAll(pageable).getContent()
+				.stream().collect(Collectors.toList());
+	}
+	
+	public Inventory retrieveFirstInByProductId(long productId) {
+		return inventoryRepository.findFirstByProductIdOrderByCreatedDate(productId);
 	}
 	
 }

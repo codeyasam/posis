@@ -3,6 +3,7 @@ package com.codeyasam.posis.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,14 +47,14 @@ public class InventoryController {
 		return inventoryService.retrieveByProductId(id);
 	}
 	
-	@RequestMapping(value="/searchByProductName/{name}")
+	@RequestMapping(value="/searchByProductName/{name}", method=RequestMethod.GET)
 	public List<Inventory> retrieveByProductName(@PathVariable String name) {
 		return inventoryService.retrieveByProductName(name);
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public List<Inventory> retrieveAllInventory() {
-		return inventoryService.retrieveAllInventory();
+	public List<Inventory> retrieveAllInventory(Pageable pageable) {
+		return inventoryService.retrieveAllInventory(pageable);
 	}
 	
 }

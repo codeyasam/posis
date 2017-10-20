@@ -3,6 +3,7 @@ package com.codeyasam.posis.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codeyasam.posis.domain.EndProduct;
 import com.codeyasam.posis.service.EndProductService;
 
+import io.swagger.annotations.Api;
+
 @RestController
 @RequestMapping("/endproduct")
+@Api(value="products")
 public class EndProductController {
 	
 	private EndProductService endProductService;
@@ -57,9 +61,14 @@ public class EndProductController {
 		return endProductService.retrieveByProductType(type);
 	}
 	
+//	@RequestMapping(value="/", method=RequestMethod.GET)
+//	public List<EndProduct> retrieveAllProductType() {
+//		return endProductService.retrieveAllProduct();
+//	}
+		
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public List<EndProduct> retrieveAllProductType() {
-		return endProductService.retrieveAllProduct();
-	}
+	public List<EndProduct> retrieveAllProductType(Pageable pageable) {
+		return endProductService.retrieveAllProduct(pageable);
+	}	
 	
 }

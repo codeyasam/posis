@@ -1,4 +1,4 @@
-package com.codeyasam.posis.test.service;
+package com.codeyasam.posis.test.service.unit;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,7 +9,7 @@ import com.codeyasam.posis.domain.ProductType;
 import com.codeyasam.posis.repository.ProductTypeRepository;
 import com.codeyasam.posis.service.ProductTypeService;
 
-public class ProductTypeServiceTest {
+public class ProductTypeServiceUnitTest {
 	
 	private ProductTypeService productTypeService;
 	private ProductTypeRepository productTypeRepositoryMock;

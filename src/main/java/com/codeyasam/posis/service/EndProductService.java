@@ -41,9 +41,15 @@ public class EndProductService {
 		return endProductRepository.findByNameContaining(text);
 	}
 	
+	public List<EndProduct> retrieveByNameContaining(String name, Pageable pageable) {
+		return endProductRepository.findByNameContaining(name, pageable);
+	}	
+
 	public List<EndProduct> retrieveByProductType(String productType) {
 		return endProductRepository.findByProductTypeName(productType);
 	}
+	
+
 	
 	public List<EndProduct> retrieveAllProduct() {
 		List<EndProduct> allProducts = new ArrayList<>();

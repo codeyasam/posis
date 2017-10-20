@@ -30,8 +30,8 @@ public class PointOfSaleController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.PUT)
-	public ResponseEntity<?> addPointOfSale(@RequestBody PointOfSale pointOfSale) {
-		pointOfSale = pointOfSaleService.addPointOfSale(pointOfSale);
+	public ResponseEntity<?> addFIFOPointOfSale(@RequestBody PointOfSale pointOfSale) {
+		pointOfSale = pointOfSaleService.addFIFOPointOfSale(pointOfSale);
 		return new ResponseEntity<PointOfSale>(pointOfSale, HttpStatus.CREATED);
 	}
 	

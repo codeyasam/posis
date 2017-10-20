@@ -11,5 +11,5 @@ public interface InventoryRepository extends PagingAndSortingRepository<Inventor
 	public List<Inventory> findByProductId(long id);
 	public List<Inventory> findByProductName(String name);
 	public Inventory findById(long id);
-	
+	public Inventory findFirstByProductIdOrderByCreatedDate(long id);
 }

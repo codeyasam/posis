@@ -1,4 +1,4 @@
-package com.codeyasam.posis.test.service;
+package com.codeyasam.posis.test.service.integration;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,7 +25,7 @@ public class PointOfSaleServiceIntegrationTest {
 	
 	@Autowired
 	private InventoryService inventoryService;
-	
+		
 	@Test
 	public void createPointOfSale() {
 		Inventory inventory = inventoryService.retrieveById(1);
@@ -37,6 +37,23 @@ public class PointOfSaleServiceIntegrationTest {
 		pointOfSale = pointOfSaleService.addPointOfSale(pointOfSale);
 		
 		int remainingStockQuantity = pointOfSale.getInventory().getStockQuantity();
+		assertEquals(remainingStockQuantity, initialStockQuantity - pointOfSale.getProductQuantity());
+	}
+	
+	@Test
+	public void createFIFOPointOfSale() {
+		Inventory expectedInventory = inventoryService.retrieveById(2);
+		int initialStockQuantity = expectedInventory.getStockQuantity();
+		
+		Inventory inventory = inventoryService.retrieveById(1);
+		PointOfSale pointOfSale = new PointOfSale();
+		pointOfSale.setInventory(inventory);
+		pointOfSale.setProductQuantity(3);
+		pointOfSale.setCreatedDate(LocalDateTime.now());
+		pointOfSale = pointOfSaleService.addFIFOPointOfSale(pointOfSale);
+		
+		int remainingStockQuantity = pointOfSale.getInventory().getStockQuantity();
+		assertEquals(pointOfSale.getInventory().getId(), 2);
 		assertEquals(remainingStockQuantity, initialStockQuantity - pointOfSale.getProductQuantity());
 	}
 	

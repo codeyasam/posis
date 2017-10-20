@@ -1,33 +1,25 @@
-package com.codeyasam.posis.test.service;
+package com.codeyasam.posis.test.service.integration;
 
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.codeyasam.posis.domain.EndProduct;
-import com.codeyasam.posis.repository.EndProductRepository;
 import com.codeyasam.posis.service.EndProductService;
 
 @RunWith(SpringRunner.class)
-@DataJpaTest
+@SpringBootTest(webEnvironment=WebEnvironment.NONE)
 public class EndProductServiceIntegrationTest {
 	
-	private EndProductService endProductService;
-	
 	@Autowired
-	private EndProductRepository endProductRepository;
-
-	@Before
-	public void setup() {
-		endProductService = new EndProductService(endProductRepository);
-	}
+	private EndProductService endProductService;
 	
 	@Test
 	public void retrieveAllPaginated() {
@@ -37,5 +29,15 @@ public class EndProductServiceIntegrationTest {
 		
 		endProductList = endProductService.retrieveAllProduct(new PageRequest(1, 3));
 		Assert.assertEquals(endProductList.size(), 1);
+	}
+	
+	@Test
+	public void retriveByNameContainingPaginated() {
+		List<EndProduct> products = endProductService.retrieveByNameContaining("i", new PageRequest(0, 2));
+		Assert.assertEquals(endProductService.retrieveByNameContaining("i").size(), 3);
+		
+		Assert.assertEquals(products.size(), 2);
+		products = endProductService.retrieveByNameContaining("i", new PageRequest(1, 2));
+		Assert.assertEquals(products.size(), 1);
 	}
 }

@@ -38,6 +38,16 @@ public class PointOfSaleService {
 		return posRepository.save(pointOfSale);
 	}
 	
+	@Transactional
+	public PointOfSale addFIFOPointOfSale(PointOfSale pointOfSale) {
+		long productId = pointOfSale.getInventory().getProduct().getId();
+		Inventory inventory = inventoryRepository.findFirstByProductIdOrderByCreatedDate(productId);
+		inventory.setStockQuantity(getRemainingStock(inventory, pointOfSale));
+		inventoryRepository.save(inventory);
+		pointOfSale.setInventory(inventory);
+		return posRepository.save(pointOfSale); 
+	}
+	
 	public PointOfSale savePOS(PointOfSale pointOfSale) {
 		return posRepository.save(pointOfSale);
 	}

@@ -3,8 +3,10 @@ package com.codeyasam.posis.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -17,6 +19,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 @EnableWebSecurity
 @EnableResourceServer
+@Profile(value=Profiles.PRODUCTION)
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	
 	private static final String RESOURCE_ID = "posis";
@@ -30,11 +33,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		
 		http.requestMatchers()
 				.antMatchers("/**")
-				.and()
-			.authorizeRequests()
-				.antMatchers("/console/**", "/test", "/inventory/", 
-						"/endproduct/**", "/pointOfSale/**", "/testing").permitAll()
-				.anyRequest().authenticated();
+					.and()
+				.authorizeRequests()
+					.anyRequest().authenticated();
+
 	}
 	
 	@Override
@@ -64,4 +66,26 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		converter.setSigningKey(SIGNING_KEY);
 		return converter;
 	}
+}
+
+@Configuration
+@EnableWebSecurity
+@Profile(value={Profiles.DEVELOPMENT, Profiles.TEST})
+class DevResourceServer extends WebSecurityConfigurerAdapter {
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.headers().frameOptions().sameOrigin();
+		http.csrf().disable();
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
+		http.authorizeRequests()
+				.antMatchers("/**").permitAll();
+	}
+}
+
+class Profiles {
+	public static final String DEVELOPMENT = "dev";
+	public static final String PRODUCTION  = "prod";
+	public static final String TEST = "test";
 }
