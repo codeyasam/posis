@@ -52,19 +52,14 @@ public class EndProductController {
 	}
 	
 	@RequestMapping(value="/searchByNameContaining", method=RequestMethod.GET)
-	public List<EndProduct> retrieveByNameContaining(@RequestParam String text) {
-		return endProductService.retrieveByNameContaining(text);
+	public List<EndProduct> retrieveByNameContaining(@RequestParam String text, Pageable pageable) {
+		return endProductService.retrieveByNameContaining(text, pageable);
 	}
 	
 	@RequestMapping(value="/searchByProductType", method=RequestMethod.GET)
 	public List<EndProduct> retrieveByProductType(@RequestParam String type) {
 		return endProductService.retrieveByProductType(type);
 	}
-	
-//	@RequestMapping(value="/", method=RequestMethod.GET)
-//	public List<EndProduct> retrieveAllProductType() {
-//		return endProductService.retrieveAllProduct();
-//	}
 		
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public List<EndProduct> retrieveAllProductType(Pageable pageable) {
