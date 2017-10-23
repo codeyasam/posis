@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.codeyasam.posis.domain.EndProduct;
+import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.service.EndProductService;
 
 @RunWith(SpringRunner.class)
@@ -39,5 +40,20 @@ public class EndProductServiceIntegrationTest {
 		Assert.assertEquals(products.size(), 2);
 		products = endProductService.retrieveByNameContaining("i", new PageRequest(1, 2));
 		Assert.assertEquals(products.size(), 1);
+	}
+	
+	@Test
+	public void retrieveByProductTypeContainingPaginated() throws PageNotFoundException {
+		List<EndProduct> products = endProductService.retrieveByProductTypeContaining("ba", new PageRequest(0, 2));
+		Assert.assertEquals(endProductService.retrieveByProductType("bag").size(), 4);
+		
+		Assert.assertEquals(products.size(), 2);
+		products = endProductService.retrieveByProductTypeContaining("ba", new PageRequest(1, 2));
+		Assert.assertEquals(2, products.size());
+	}	
+	
+	@Test(expected=PageNotFoundException.class)
+	public void retrieveByProductTypeContainingPageNotFoundException() throws PageNotFoundException {
+		endProductService.retrieveByProductTypeContaining("ba", new PageRequest(3, 2));
 	}
 }

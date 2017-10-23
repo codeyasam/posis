@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.codeyasam.posis.domain.EndProduct;
 import com.codeyasam.posis.domain.ProductType;
+import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.repository.EndProductRepository;
 import com.codeyasam.posis.repository.ProductTypeRepository;
 import com.codeyasam.posis.service.EndProductService;
@@ -59,6 +60,9 @@ public class EndProductServiceUnitTest {
 		
 		Mockito.when(endProductRepositoryMock.findByNameContaining(Mockito.anyString(), Mockito.any(Pageable.class)))
 			.thenReturn(productList);
+	
+		Mockito.when(endProductRepositoryMock.findByProductTypeNameContaining(Mockito.anyString(), Mockito.any(Pageable.class)))
+			.thenReturn(productList);
 	}
 	
 	
@@ -76,4 +80,11 @@ public class EndProductServiceUnitTest {
 		Assert.assertEquals(productList.size(), 3);
 	}
 
+	@Test
+	public void findByProductTypeContainingWithPagination() throws PageNotFoundException {
+		setupMockedProductList();
+		List<EndProduct> productList = endProductService.retrieveByProductTypeContaining(null, null);
+		Assert.assertEquals(productList.size(), 3);
+	}
+	
 }
