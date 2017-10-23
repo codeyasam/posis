@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.codeyasam.posis.domain.Inventory;
+import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.service.InventoryService;
 
 @RunWith(SpringRunner.class)
@@ -38,6 +39,26 @@ public class InventoryServiceIntegrationTest {
 		assertEquals(inventory.getId(), 2);
 	}
 	
+	@Test
+	public void retrieveByProductName() {
+		assertEquals(4, inventoryService.retrieveByProductName("tigernu").size());
+	}
+	
+	@Test
+	public void retrieveByProductNameWithPagination() throws PageNotFoundException {
+		List<Inventory> pageableInventory = inventoryService.retrieveByProductNameContaining("i", new PageRequest(0, 3));
+		assertEquals(3, pageableInventory.size());
+		
+		pageableInventory = inventoryService.retrieveByProductNameContaining("i", new PageRequest(1, 3));
+		assertEquals(1, pageableInventory.size());
+	}
+	
+	@Test(expected=PageNotFoundException.class)
+	public void retrieveByProductNameWithPageNotFoundException() throws PageNotFoundException {
+		inventoryService.retrieveByProductNameContaining("i", new PageRequest(1, 4));
+	}
+	
+
 }
 
 

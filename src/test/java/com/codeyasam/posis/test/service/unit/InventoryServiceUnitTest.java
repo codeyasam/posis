@@ -3,6 +3,7 @@ package com.codeyasam.posis.test.service.unit;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import com.codeyasam.posis.domain.Inventory;
+import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.repository.InventoryRepository;
 import com.codeyasam.posis.service.InventoryService;
 
@@ -69,5 +71,33 @@ public class InventoryServiceUnitTest {
 		
 		Inventory foundInventory = inventoryService.retrieveFirstInByProductId(1);
 		assertEquals(foundInventory.getId(), inventory.getId());
+	}
+	
+	@Test
+	public void retrieveByProductNameContaining() throws PageNotFoundException {
+		List<Inventory> inventories = new ArrayList<>();
+		inventories.add(new Inventory(1, null, 13, 100, 500));
+		inventories.add(new Inventory(2, null, 14, 100, 500));
+		inventories.add(new Inventory(3, null, 15, 100, 500));
+		
+		when(inventoryRepositoryMock.findByProductNameContaining(anyString()))
+			.thenReturn(inventories);
+		
+		List<Inventory> foundInventories = inventoryService.retrieveByProductNameContaining("i");
+		assertEquals(inventories.size(), foundInventories.size());
+	}
+	
+	@Test
+	public void retrieveByProductNameWithPagination() throws PageNotFoundException {
+		List<Inventory> inventories = new ArrayList<>();
+		inventories.add(new Inventory(1, null, 13, 100, 500));
+		inventories.add(new Inventory(2, null, 14, 100, 500));
+		inventories.add(new Inventory(3, null, 15, 100, 500));
+		
+		when(inventoryRepositoryMock.findByProductNameContaining(anyString(), any(Pageable.class)))
+			.thenReturn(inventories);
+		
+		List<Inventory> foundInventories = inventoryService.retrieveByProductNameContaining(null, null);
+		assertEquals(inventories.size(), foundInventories.size());
 	}
 }

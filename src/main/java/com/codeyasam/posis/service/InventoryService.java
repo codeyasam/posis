@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.codeyasam.posis.domain.Inventory;
+import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.repository.InventoryRepository;
 
 @Service
@@ -43,6 +44,18 @@ public class InventoryService {
 	
 	public List<Inventory> retrieveByProductName(String name) {
 		return inventoryRepository.findByProductName(name);
+	}
+	
+	public List<Inventory> retrieveByProductNameContaining(String name) {
+		return inventoryRepository.findByProductNameContaining(name);
+	}
+	
+	public List<Inventory> retrieveByProductNameContaining(String name, Pageable pageable) throws PageNotFoundException {
+		List<Inventory> inventories =  inventoryRepository.findByProductNameContaining(name, pageable);
+		if (inventories.isEmpty()) {
+			throw new PageNotFoundException("Page not found, with page number of: " + pageable.getPageNumber());
+		}
+		return inventories;
 	}
 	
 	public List<Inventory> retrieveAllInventory() {

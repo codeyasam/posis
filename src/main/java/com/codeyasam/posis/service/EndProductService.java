@@ -53,7 +53,7 @@ public class EndProductService {
 	public List<EndProduct> retrieveByProductTypeContaining(String productType, Pageable pageable) throws PageNotFoundException {
 		List<EndProduct> productList = endProductRepository.findByProductTypeNameContaining(productType, pageable);
 		if (productList.isEmpty()) {
-			//throw new PageNotFoundException("Page not found exception for products, with value of: " + pageable.getPageNumber());
+			throw new PageNotFoundException("Page not found exception for products, with value of: " + pageable.getPageNumber());
 		}
 		return productList;
 	}
