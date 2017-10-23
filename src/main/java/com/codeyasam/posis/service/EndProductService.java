@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.codeyasam.posis.domain.EndProduct;
+import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.repository.EndProductRepository;
 
 @Service
@@ -49,7 +50,13 @@ public class EndProductService {
 		return endProductRepository.findByProductTypeName(productType);
 	}
 	
-
+	public List<EndProduct> retrieveByProductTypeContaining(String productType, Pageable pageable) throws PageNotFoundException {
+		List<EndProduct> productList = endProductRepository.findByProductTypeNameContaining(productType, pageable);
+		if (productList.isEmpty()) {
+			//throw new PageNotFoundException("Page not found exception for products, with value of: " + pageable.getPageNumber());
+		}
+		return productList;
+	}
 	
 	public List<EndProduct> retrieveAllProduct() {
 		List<EndProduct> allProducts = new ArrayList<>();
