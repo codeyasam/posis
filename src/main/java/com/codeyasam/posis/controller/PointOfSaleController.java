@@ -28,12 +28,12 @@ public class PointOfSaleController {
 	public PointOfSaleController(PointOfSaleService pointOfSaleService) {
 		this.pointOfSaleService = pointOfSaleService;
 	}
-	
+
 	@RequestMapping(value="/", method=RequestMethod.PUT)
 	public ResponseEntity<?> addFIFOPointOfSale(@RequestBody PointOfSale pointOfSale) {
 		pointOfSale = pointOfSaleService.addFIFOPointOfSale(pointOfSale);
 		return new ResponseEntity<PointOfSale>(pointOfSale, HttpStatus.CREATED);
-	}
+	}	
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public List<PointOfSale> retrieveAllPointOfSale() {
@@ -44,4 +44,9 @@ public class PointOfSaleController {
 	public List<PointOfSale> retrieveByProductId(@PathVariable long productId) {
 		return pointOfSaleService.retrieveByProductId(productId);
 	}
+	
+	public ResponseEntity<?> addPointOfSale(@RequestBody PointOfSale pointOfSale) {
+		pointOfSale = pointOfSaleService.addPointOfSale(pointOfSale);
+		return new ResponseEntity<PointOfSale>(pointOfSale, HttpStatus.CREATED);
+	}	
 }
