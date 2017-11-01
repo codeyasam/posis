@@ -16,11 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codeyasam.posis.domain.EndProduct;
 import com.codeyasam.posis.service.EndProductService;
 
-import io.swagger.annotations.Api;
-
 @RestController
 @RequestMapping("/endproduct")
-@Api(value="products")
 public class EndProductController {
 	
 	private EndProductService endProductService;
