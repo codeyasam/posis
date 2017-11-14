@@ -1,4 +1,4 @@
-package com.codeyasam.posis.controller;
+package com.codeyasam.posis.restcontroller;
 
 import java.util.List;
 

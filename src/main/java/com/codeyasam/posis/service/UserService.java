@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specifications;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -50,6 +51,7 @@ public class UserService implements UserDetailsService {
 		return new UserDetailsImpl(foundUser.get());
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public EndUser createUser(EndUser user) throws UserAlreadyExistException {
 		Optional<EndUser> foundUser = retrieveByUsername(user.getUsername());
 		if (foundUser.isPresent()) {

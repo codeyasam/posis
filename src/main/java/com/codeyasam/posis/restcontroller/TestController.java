@@ -1,4 +1,4 @@
-package com.codeyasam.posis.controller;
+package com.codeyasam.posis.restcontroller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;

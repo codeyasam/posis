@@ -12,9 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.codeyasam.posis.controller.PointOfSaleController;
 import com.codeyasam.posis.domain.Inventory;
 import com.codeyasam.posis.domain.PointOfSale;
+import com.codeyasam.posis.restcontroller.PointOfSaleController;
 import com.codeyasam.posis.service.InventoryService;
 
 @RunWith(SpringRunner.class)
