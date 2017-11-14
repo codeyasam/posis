@@ -11,6 +11,10 @@ import com.codeyasam.posis.domain.security.EndUser;
 
 public class UserDetailsImpl implements UserDetails {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4193213622244656540L;
 	private EndUser user;
 	
 	public UserDetailsImpl(EndUser user) {
@@ -26,7 +30,7 @@ public class UserDetailsImpl implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		return user.getPasssword();
+		return user.getPassword();
 	}
 
 	@Override

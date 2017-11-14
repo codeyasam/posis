@@ -24,7 +24,7 @@ public class EndUser {
 	private String username;
 	
 	@Column(nullable=false)
-	private String passsword;
+	private String password;
 	
 	@ManyToMany
 	private Set<Role> roles;
@@ -61,12 +61,12 @@ public class EndUser {
 		this.username = username;
 	}
 
-	public String getPasssword() {
-		return passsword;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setPasssword(String passsword) {
-		this.passsword = passsword;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public Set<Role> getRoles() {
