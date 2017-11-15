@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +58,8 @@ public class EndUserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public List<EndUserDTO> retrieveUsersBySearch(@RequestParam("search") String text, Pageable pageable) throws PageNotFoundException {
+	public List<EndUserDTO> retrieveUsersBySearch(@RequestParam(value="search", defaultValue="") String text, Pageable pageable) throws PageNotFoundException {
+		pageable = new PageRequest(pageable.getPageNumber() - 1, pageable.getPageSize(), pageable.getSort());
 		return userService.retrieveInAnyColumn(text, pageable)
 			.stream()
 			.map(user -> convertToDTO(user))
