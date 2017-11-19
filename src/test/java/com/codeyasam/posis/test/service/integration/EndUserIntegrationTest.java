@@ -41,11 +41,8 @@ public class EndUserIntegrationTest {
 	}
 	
 	@Test
-	public void retrieveInAllColumns() throws PageNotFoundException {
-		List<EndUser> foundUsers = userService.retrieveInAnyColumn("emman", new PageRequest(0, 5));
-		assertEquals(1, foundUsers.size());
-		
-		foundUsers = userService.retrieveInAnyColumn("%emm%", new PageRequest(0, 5));
+	public void retrieveInAllColumns() throws PageNotFoundException {	
+		List<EndUser> foundUsers = userService.retrieveInAnyColumn("%emm%", new PageRequest(0, 5));
 		assertEquals(1, foundUsers.size());				
 	}
 	
@@ -54,4 +51,27 @@ public class EndUserIntegrationTest {
 		userService.retrieveInAnyColumn("emm", new PageRequest(0, 5));		
 	}
 	
+	@Test
+	public void retrieveByFullName() throws PageNotFoundException {
+		List<EndUser> foundUsers = userService.retrieveInAnyColumn("emman yasa", new PageRequest(0, 5));
+		assertEquals(1, foundUsers.size());
+	}
+	
+	@Test
+	public void retrieveByFirstName() throws PageNotFoundException {
+		List<EndUser> foundUsers = userService.retrieveInAnyColumn("emman", new PageRequest(0, 5));
+		assertEquals(1, foundUsers.size());		
+	}
+	
+	@Test
+	public void retrieveByLastName() throws PageNotFoundException {
+		List<EndUser> foundUsers = userService.retrieveInAnyColumn("yasa", new PageRequest(0, 5));
+		assertEquals(1, foundUsers.size());		
+	}
+	
+	@Test
+	public void retrieveAll() throws PageNotFoundException {
+		List<EndUser> foundUsers = userService.retrieveInAnyColumn("", new PageRequest(0, 5));
+		assertEquals(1, foundUsers.size());
+	}
 }

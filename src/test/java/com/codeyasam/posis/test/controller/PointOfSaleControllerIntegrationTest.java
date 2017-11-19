@@ -41,7 +41,6 @@ public class PointOfSaleControllerIntegrationTest {
 		ResponseEntity<?> response = pointOfSaleController.addPointOfSale(pointOfSale);
 		PointOfSale responseObj = (PointOfSale) response.getBody();
 		
-		inventory = inventoryService.retrieveById(1);
 		Assert.assertEquals(response.getStatusCode(), HttpStatus.CREATED);
 		Assert.assertEquals(responseObj.getInventory().getStockQuantity(), initialStockQty - productQty);
 		
