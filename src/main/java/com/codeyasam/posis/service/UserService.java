@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -87,6 +88,8 @@ public class UserService implements UserDetailsService {
 	}
 	
 	public List<EndUser> retrieveInAnyColumn(String text, Pageable pageable) throws PageNotFoundException {
+		int pageNumber = pageable.getPageNumber() > 0 ? pageable.getPageNumber() - 1 : 0;
+		pageable = new PageRequest(pageNumber, pageable.getPageSize(), pageable.getSort());
 		List<EndUser> foundUsers = new ArrayList<>();
 		Page<EndUser> page = userRepository.findAll(Specifications.where(EndUserSpecification.textInAllColumns(text)), pageable); 
 		page.forEach(foundUsers::add);
