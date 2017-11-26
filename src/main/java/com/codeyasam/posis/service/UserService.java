@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,14 +34,16 @@ public class UserService implements UserDetailsService {
 
 	private UserRepository userRepository;
 	private BCryptPasswordEncoder passwordEncoder;
+	private EntityManager entityManager;
 	
 	public UserService() {
 		
 	}
 	
 	@Autowired
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, EntityManager entityManager) {
 		this.userRepository = userRepository;
+		this.entityManager = entityManager;
 		passwordEncoder = new BCryptPasswordEncoder();
 	}
 	
@@ -98,6 +106,15 @@ public class UserService implements UserDetailsService {
 		}
 		return foundUsers;
 	}
-
+	
+	public long retrieveCountBySpecification(String text) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<EndUser> root = criteriaQuery.from(EndUser.class);
+		Predicate restrictions = EndUserSpecification.textInAllColumns(text).toPredicate(root, criteriaQuery, criteriaBuilder);
+		criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(EndUser.class)));
+		criteriaQuery.where(restrictions);
+		return entityManager.createQuery(criteriaQuery).getSingleResult();
+	}
 }
  
