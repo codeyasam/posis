@@ -1,10 +1,12 @@
 package com.codeyasam.posis.restcontroller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codeyasam.posis.domain.security.EndUser;
 import com.codeyasam.posis.dto.EndUserDTO;
+import com.codeyasam.posis.dto.MultipleDataResponse;
 import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.exception.UserAlreadyExistException;
 import com.codeyasam.posis.exception.UserNotFoundException;
@@ -39,9 +42,10 @@ public class EndUserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.PUT)
-	public ResponseEntity<EndUser> createUser(@RequestBody EndUser user) throws UserAlreadyExistException {
+	public ResponseEntity<EndUserDTO> createUser(@RequestBody EndUser user) throws UserAlreadyExistException {
 		user = userService.createUser(user);
-		return new ResponseEntity<>(user, HttpStatus.CREATED);
+		EndUserDTO userDTO = modelMapper.map(user, EndUserDTO.class);
+		return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
@@ -57,13 +61,17 @@ public class EndUserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public List<EndUserDTO> retrieveUsersBySearch(@RequestParam(value="search", defaultValue="") String text, Pageable pageable) throws PageNotFoundException {
-		return userService.retrieveInAnyColumn(text, pageable)
+	public MultipleDataResponse<EndUserDTO> retrieveUsersBySearch(@RequestParam(value="search", defaultValue="") String text, Pageable pageable) throws PageNotFoundException, UnsupportedEncodingException {
+		MultipleDataResponse<EndUserDTO> response = new MultipleDataResponse<>();
+		List<EndUserDTO> userList = userService.retrieveInAnyColumn(text, pageable)
 			.stream()
 			.map(user -> convertToDTO(user))
 			.collect(Collectors.toList());
+		response.setData(userList);
+		response.setTotal(userService.retrieveCountBySpecification(text));
+		return response;
 	}
-	
+		
 	private EndUserDTO convertToDTO(EndUser user) {
 		EndUserDTO endUserDTO = modelMapper.map(user, EndUserDTO.class);
 		endUserDTO.setRoles(user.getRoles());
