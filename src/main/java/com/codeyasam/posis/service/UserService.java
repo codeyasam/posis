@@ -111,10 +111,10 @@ public class UserService implements UserDetailsService {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<EndUser> root = criteriaQuery.from(EndUser.class);
+		criteriaQuery.select(criteriaBuilder.countDistinct(root));
 		Predicate restrictions = EndUserSpecification.textInAllColumns(text).toPredicate(root, criteriaQuery, criteriaBuilder);
-		criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(EndUser.class)));
 		criteriaQuery.where(restrictions);
 		return entityManager.createQuery(criteriaQuery).getSingleResult();
-	}
+	}	
 }
  
