@@ -10,6 +10,7 @@ public class EndUserDTO {
 	private String firstName;
 	private String lastName;
 	private String username;
+	private String status;
 	
 	private Set<Role> roles;
 
@@ -44,7 +45,15 @@ public class EndUserDTO {
 	public void setUsername(String username) {
 		this.username = username;
 	}
+	
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
+	public String getStatus() {
+		return status;
+	}
+	
 	public Set<Role> getRoles() {
 		return roles;
 	}

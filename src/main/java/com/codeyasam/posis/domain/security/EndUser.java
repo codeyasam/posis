@@ -26,6 +26,8 @@ public class EndUser {
 	@Column(nullable=false)
 	private String password;
 	
+	private String status;
+	
 	@ManyToMany
 	private Set<Role> roles;
 
@@ -67,6 +69,14 @@ public class EndUser {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+	public String getStatus() {
+		return status;
 	}
 
 	public Set<Role> getRoles() {
