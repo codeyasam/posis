@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href = "https://cdnjs.cloudflare.com/ajax/libs/extjs/6.0.0/classic/theme-classic/resources/theme-classic-all.css" 
+		rel = "stylesheet" />         
+
+		<script type = "text/javascript" 
+		src = "https://cdnjs.cloudflare.com/ajax/libs/extjs/6.0.0/ext-all.js"></script>
+
+		<!-- <script type="text/javascript" th:src="@{/js/posiscore.js}"></script>	-->
+		<script type="text/javascript" src="../../static/js/sampleData.js"></script>
+		<script type="text/javascript" src="../../static/js/posiscore.js"></script>
+
+		<script type="text/javascript">
+			Ext.onReady(function() {
+				Ext.application({
+					name: 'Posis',
+					stores: ['UserStore'],
+					launch: function() {
+						Ext.widget('userslist', {
+							renderTo: 'panel'
+						});
+					}
+				});
+			});
+		</script>	
+	</head>
+	<body>
+		<div id="panel"></div>
+	</body>
+</html>

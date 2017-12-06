@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href = "https://cdnjs.cloudflare.com/ajax/libs/extjs/6.0.0/classic/theme-classic/resources/theme-classic-all.css" 
+		rel = "stylesheet" /> 
+
+		<script type = "text/javascript" 
+		src = "https://cdnjs.cloudflare.com/ajax/libs/extjs/6.0.0/ext-all.js"></script>
+
+		<script type="text/javascript">
+			Ext.override(Ext.data.Store, {
+			    loadDataViaReader : function(data, append) {
+			        var me      = this,
+			            result  = me.proxy.reader.read(data),
+			            records = result.records;
+
+			        me.loadRecords(records, { addRecords: append });
+			        me.fireEvent('load', me, result.records, true);
+			    }            
+			});
+
+            var data = [
+            	{"id":1,"firstName":"emman",
+            		    "lastName":"yasa",
+            		    "username":"codeyasam",
+            		    "roles":[
+            		    	{"id":2,"role":"ROLE_ADMIN"},
+            	            {"id":1,"role":"ROLE_USER"}
+            	        ]
+            	},{"id":2,"firstName":"jojo",
+            	          "lastName":"bauts",
+            	          "username":"joheyyy",
+            	          "roles":[
+						     {"id":1,"role":"ROLE_USER"}
+						  ]
+				}
+			]
+
+			Ext.define("posis.model.User", {
+			    extend: 'Ext.data.Model',
+			    fields: ['id', 'firstName', 'lastName', 'username'],
+			    hasMany: [{
+			        model: 'posis.model.Role',
+			        name: 'roles'
+			    }]
+			});
+
+			Ext.define("posis.model.Role", {
+			    extend: 'Ext.data.Model',
+			    fields: ['id', 'role']
+			});			
+
+			Ext.onReady(function() {
+				var store = Ext.create('Ext.data.Store', {
+				    model: "posis.model.User",
+				    autoLoad: true,
+				    data: data,
+				    proxy: {
+				        type: 'memory',
+				        reader: {
+				        	type: 'json',
+				        	root: '',
+				        	idProperty: 'id'
+				        }
+				    }
+				});
+
+				Ext.create('Ext.grid.Panel', {
+				    title: 'test',
+				    store: store,
+				    columns: [{
+				        text: 'id',
+				        dataIndex: 'id'
+				    }, {
+				    	text: 'FIRST NAME',
+				    	dataIndex: ''
+				    }, {
+				        text: 'username',
+				        dataIndex: 'username'
+				    }, {
+				        text: 'role',
+				        renderer: function (value, metaData, record, rowIdx, colIdx, store, view) {
+				            values = [];
+				            record.roles().each(function(role){
+				                values.push(role.get('role'));
+				            });
+				            return values.join('<br\>');
+				        }
+				    }],
+				    height: 200,
+				    width: 600,
+				    renderTo: 'sample'
+				});							
+			});	
+		</script>				
+	</head>
+	<body>
+		<div id="sample"></div>
+	</body>
+</html>

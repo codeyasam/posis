@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Chulien Posis</title>
+		<link href = "https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-classic/resources/theme-classic-all.css" 
+		rel = "stylesheet" />         
+		
+		<script type = "text/javascript" 
+		src = "https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/ext-all.js"></script>
+
+		<script type="text/javascript" th:src="@{/js/sampleData.js}"></script>
+		<script type="text/javascript" th:src="@{/js/usermanagement.js}"></script> 
+
+		<!-- <script type="text/javascript" src="../static/js/sampleData.js"></script>
+		<script type="text/javascript" src="../static/js/usermanagement.js"></script>			-->	
+		<script type="text/javascript">
+			Ext.define('Posis.view.MainContainer', {
+				extend: 'Ext.TabPanel',
+				alias: 'widget.maincontainer',
+				id: 'mainContainer',
+				fullscreen: true,
+				activeTab: 1,
+				listeners: {
+					tabchange: function(panel, tab) {
+						panel.updateLayout();
+					}
+				},
+			    items: [{
+			        title: 'HOME',
+			        html: '<div id="home"></div>'
+			    }, {
+			        title: 'MANAGE USERS',
+			        html: '<div id="manageUsers"></div>',
+			        listeners: {
+			        	render: function() { 
+			        		Ext.widget('userslist', { renderTo: 'manageUsers' });
+			        	}
+			        }	 
+			    }, {
+			    	title: 'TEST PANEL',
+			    	html: '<div id="testpanel"></div>'
+			    }]
+			});
+
+			Ext.onReady(function() {
+				Ext.application({
+					name: 'Posis',
+					stores: ['UserStore'],
+					controllers: ['UserController'],
+					launch: function() {
+						var mainpanel = new Posis.view.MainContainer({
+							renderTo: 'container'
+						});
+						mainpanel.updateLayout();	
+					}
+				});
+			});	
+		</script>
+	</head>
+	<body>
+		<div id="container"></div>
+	</body>
+</html>
