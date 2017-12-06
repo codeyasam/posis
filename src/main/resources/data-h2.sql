@@ -1,6 +1,20 @@
-INSERT INTO end_user (first_name, last_name, username, password) VALUES ('emman', 'yasa', 'codeyasam', '$2a$10$OgdVUakfxqxY5qTld22Ho.SCqk8Tv4NT6bdJxS6kx2/LS3CqipxYa');
+INSERT INTO end_user (first_name, last_name, username, password, status) VALUES ('emman', 'yasa', 'codeyasam', '$2a$10$OgdVUakfxqxY5qTld22Ho.SCqk8Tv4NT6bdJxS6kx2/LS3CqipxYa', 'ENABLED');
 
-INSERT INTO end_user (first_name, last_name, username, password) VALUES ('jojo', 'bauts', 'joheyyy', '$2a$10$OgdVUakfxqxY5qTld22Ho.SCqk8Tv4NT6bdJxS6kx2/LS3CqipxYa');
+INSERT INTO end_user (first_name, last_name, username, password, status) VALUES ('jojo', 'bauts', 'joheyyy', '$2a$10$OgdVUakfxqxY5qTld22Ho.SCqk8Tv4NT6bdJxS6kx2/LS3CqipxYa', 'ENABLED');
+
+INSERT INTO end_user (first_name, last_name, username, password, status) VALUES ('jojo', 'bauts', 'test', '$2a$10$OgdVUakfxqxY5qTld22Ho.SCqk8Tv4NT6bdJxS6kx2/LS3CqipxYa', 'DISABLED');
+
+INSERT INTO end_user (first_name, last_name, username, password, status) VALUES ('emman', 'yasa', 'test1', '$2a$10$OgdVUakfxqxY5qTld22Ho.SCqk8Tv4NT6bdJxS6kx2/LS3CqipxYa', 'ENABLED');
+
+INSERT INTO end_user (first_name, last_name, username, password, status) VALUES ('jojo', 'bauts', 'test2', '$2a$10$OgdVUakfxqxY5qTld22Ho.SCqk8Tv4NT6bdJxS6kx2/LS3CqipxYa', 'ENABLED');
+
+INSERT INTO end_user (first_name, last_name, username, password, status) VALUES ('jojo', 'bauts', 'test3', '$2a$10$OgdVUakfxqxY5qTld22Ho.SCqk8Tv4NT6bdJxS6kx2/LS3CqipxYa', 'DISABLED');
+
+INSERT INTO end_user (first_name, last_name, username, password, status) VALUES ('emman', 'yasa', 'test4', '$2a$10$OgdVUakfxqxY5qTld22Ho.SCqk8Tv4NT6bdJxS6kx2/LS3CqipxYa', 'ENABLED');
+
+INSERT INTO end_user (first_name, last_name, username, password, status) VALUES ('jojo', 'bauts', 'test5', '$2a$10$OgdVUakfxqxY5qTld22Ho.SCqk8Tv4NT6bdJxS6kx2/LS3CqipxYa', 'ENABLED');
+
+INSERT INTO end_user (first_name, last_name, username, password, status) VALUES ('jojo', 'bauts', 'test6', '$2a$10$OgdVUakfxqxY5qTld22Ho.SCqk8Tv4NT6bdJxS6kx2/LS3CqipxYa', 'DISABLED');
 
 INSERT INTO role (role) VALUES ('ROLE_USER');
 INSERT INTO role (role) VALUES ('ROLE_ADMIN');
@@ -8,6 +22,7 @@ INSERT INTO role (role) VALUES ('ROLE_ADMIN');
 INSERT INTO end_user_roles (end_user_id, roles_id) VALUES (1, 1);
 INSERT INTO end_user_roles (end_user_id, roles_id) VALUES (1, 2);
 INSERT INTO end_user_roles (end_user_id, roles_id) VALUES (2, 1);
+INSERT INTO end_user_roles (end_user_id, roles_id) VALUES (3, 1);
 
 INSERT INTO product_type (name) VALUES ('bag');
 INSERT INTO product_type (name) VALUES ('device');
