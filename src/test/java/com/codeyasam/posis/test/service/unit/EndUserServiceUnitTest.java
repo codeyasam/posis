@@ -7,6 +7,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,13 +21,15 @@ public class EndUserServiceUnitTest {
 	
 	private UserService userService;
 	private UserRepository userRepository;
+	private EntityManager entityManager;
 	private Optional<EndUser> foundUser;
 	private EndUser user;
 	
 	@Before
 	public void setup() {
 		userRepository = mock(UserRepository.class);
-		userService = new UserService(userRepository);
+		entityManager = mock(EntityManager.class);
+		userService = new UserService(userRepository, entityManager);
 		foundUser = Optional.empty();
 		setupUser();
 	}

@@ -43,7 +43,13 @@ public class EndUserIntegrationTest {
 	@Test
 	public void retrieveInAllColumns() throws PageNotFoundException {	
 		List<EndUser> foundUsers = userService.retrieveInAnyColumn("%emm%", new PageRequest(0, 5));
-		assertEquals(1, foundUsers.size());				
+		assertEquals(1, foundUsers.size());	
+	}
+	
+	@Test
+	public void retrieveCountInAllColumns() {
+		long count = userService.retrieveCountBySpecification("%emm%");
+		assertEquals(1, count);
 	}
 	
 	@Test(expected=PageNotFoundException.class)
@@ -58,9 +64,21 @@ public class EndUserIntegrationTest {
 	}
 	
 	@Test
+	public void retrieveCountByFullName() {
+		long count = userService.retrieveCountBySpecification("emman yasa");
+		assertEquals(1, count);
+	}
+	
+	@Test
 	public void retrieveByFirstName() throws PageNotFoundException {
 		List<EndUser> foundUsers = userService.retrieveInAnyColumn("emman", new PageRequest(0, 5));
 		assertEquals(1, foundUsers.size());		
+	}
+	
+	@Test
+	public void retrieveCountByFirstName() {
+		long count = userService.retrieveCountBySpecification("emman");
+		assertEquals(1, count);
 	}
 	
 	@Test
@@ -70,8 +88,20 @@ public class EndUserIntegrationTest {
 	}
 	
 	@Test
+	public void retrieveCountByLastName() {
+		long count = userService.retrieveCountBySpecification("yasa");
+		assertEquals(1, count);
+	}
+	
+	@Test
 	public void retrieveAll() throws PageNotFoundException {
 		List<EndUser> foundUsers = userService.retrieveInAnyColumn("", new PageRequest(0, 5));
-		assertEquals(1, foundUsers.size());
+		assertEquals(2, foundUsers.size());
+	}
+	
+	@Test
+	public void retrieveCountAll() {
+		long count = userService.retrieveCountBySpecification("");
+		assertEquals(2, count);
 	}
 }
