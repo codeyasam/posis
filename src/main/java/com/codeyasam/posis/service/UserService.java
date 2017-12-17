@@ -48,7 +48,7 @@ public class UserService implements UserDetailsService {
 	}
 	
 	public Optional<EndUser> retrieveByUsername(String username) {
-		return userRepository.findByUsername(username);
+		return userRepository.findByUsernameIgnoreCase(username);
 	}
 	
 	@Override
