@@ -7,7 +7,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.codeyasam.posis.dto.ExceptionDataResponse;
 import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.exception.UserAlreadyExistException;
 import com.codeyasam.posis.exception.UserNotFoundException;
@@ -21,8 +23,11 @@ public class ExceptionControllerAdvice {
 	}
 	
 	@ExceptionHandler(UserAlreadyExistException.class)
-	public void handleUserAlreadyExistException(UserAlreadyExistException exception, HttpServletResponse response) throws IOException {
-		response.sendError(HttpStatus.CONFLICT.value(), exception.getMessage());
+	public @ResponseBody ExceptionDataResponse handleUserAlreadyExistException(UserAlreadyExistException exception) {
+		ExceptionDataResponse response = new ExceptionDataResponse();
+		response.setPrompt(exception.getMessage());
+		response.setStatus(HttpStatus.CONFLICT.value());
+		return response;
 	}
 	
 	@ExceptionHandler(UserNotFoundException.class)

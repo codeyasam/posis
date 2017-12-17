@@ -1,6 +1,5 @@
 package com.codeyasam.posis.restcontroller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codeyasam.posis.domain.security.EndUser;
 import com.codeyasam.posis.dto.EndUserDTO;
 import com.codeyasam.posis.dto.MultipleDataResponse;
+import com.codeyasam.posis.dto.SingleDataResponse;
 import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.exception.UserAlreadyExistException;
 import com.codeyasam.posis.exception.UserNotFoundException;
@@ -41,10 +41,14 @@ public class EndUserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.PUT)
-	public ResponseEntity<EndUserDTO> createUser(@RequestBody EndUser user) throws UserAlreadyExistException {
+	public SingleDataResponse<EndUserDTO> createUser(@RequestBody EndUser user) throws UserAlreadyExistException {
+		SingleDataResponse<EndUserDTO> response = new SingleDataResponse<>();
 		user = userService.createUser(user);
 		EndUserDTO userDTO = modelMapper.map(user, EndUserDTO.class);
-		return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+		response.setData(userDTO);
+		response.setPrompt("User successfully created.");
+		response.setStatus(HttpStatus.CREATED.value());
+		return response;
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
@@ -60,7 +64,7 @@ public class EndUserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
-	public MultipleDataResponse<EndUserDTO> retrieveUsersBySearch(@RequestParam(value="search", defaultValue="") String text, Pageable pageable) throws PageNotFoundException, UnsupportedEncodingException {
+	public MultipleDataResponse<EndUserDTO> retrieveUsersBySearch(@RequestParam(value="search", defaultValue="") String text, Pageable pageable) throws PageNotFoundException {
 		MultipleDataResponse<EndUserDTO> response = new MultipleDataResponse<>();
 		List<EndUserDTO> userList = userService.retrieveInAnyColumn(text, pageable)
 			.stream()
@@ -68,6 +72,7 @@ public class EndUserController {
 			.collect(Collectors.toList());
 		response.setData(userList);
 		response.setTotal(userService.retrieveCountBySpecification(text));
+		response.setStatus(HttpStatus.OK);
 		return response;
 	}
 		
