@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.codeyasam.posis.domain.security.EndUser;
 import com.codeyasam.posis.exception.PageNotFoundException;
@@ -25,6 +26,7 @@ public class EndUserIntegrationTest {
 	private UserService userService;
 	
 	@Test(expected=UserAlreadyExistException.class)
+	@Transactional
 	public void createUserWithAlreadyExistException() throws UserAlreadyExistException {
 		EndUser user = new EndUser();
 		user.setFirstName("emman");
@@ -32,6 +34,17 @@ public class EndUserIntegrationTest {
 		user.setUsername("codeyasam");
 		user.setPassword("secret");
 		userService.createUser(user);
+	}
+	
+	@Test(expected=UserAlreadyExistException.class)
+	@Transactional
+	public void createUserWithAlreadyExistExceptionIgnoreCase() throws UserAlreadyExistException {
+		EndUser user = new EndUser();
+		user.setFirstName("emman");
+		user.setLastName("yasa");
+		user.setUsername("CODEYASAM");
+		user.setPassword("secret");
+		userService.createUser(user);		
 	}
 
 	@Test

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.codeyasam.posis.domain.Inventory;
 import com.codeyasam.posis.domain.PointOfSale;
@@ -18,6 +19,7 @@ import com.codeyasam.posis.service.PointOfSaleService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@Transactional
 public class PointOfSaleServiceIntegrationTest {
 
 	@Autowired
@@ -53,7 +55,7 @@ public class PointOfSaleServiceIntegrationTest {
 		pointOfSale = pointOfSaleService.addFIFOPointOfSale(pointOfSale);
 		
 		int remainingStockQuantity = pointOfSale.getInventory().getStockQuantity();
-		assertEquals(pointOfSale.getInventory().getId(), 2);
+		assertEquals(2, pointOfSale.getInventory().getId());
 		assertEquals(remainingStockQuantity, initialStockQuantity - pointOfSale.getProductQuantity());
 	}
 	
