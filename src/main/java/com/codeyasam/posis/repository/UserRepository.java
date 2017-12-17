@@ -13,6 +13,7 @@ import com.codeyasam.posis.domain.security.EndUser;
 public interface UserRepository extends PagingAndSortingRepository<EndUser, Long> {
 	
 	public Optional<EndUser> findByUsername(String username);
+	public Optional<EndUser> findByUsernameIgnoreCase(String username);
 	public List<EndUser> findByFirstNameContainingOrLastNameContaining(String firstName, String lastName, Pageable pageable);
 	
 	public Page<EndUser> findAll(Specification<EndUser> specification, Pageable pageable);
