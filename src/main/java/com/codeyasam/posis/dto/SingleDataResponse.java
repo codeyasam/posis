@@ -1,9 +1,9 @@
 package com.codeyasam.posis.dto;
 
-public class SingleDataResponse<T> {
+public class SingleDataResponse<T> extends DataResponse {
 	
 	private T data;
-
+	
 	public T getData() {
 		return data;
 	}
