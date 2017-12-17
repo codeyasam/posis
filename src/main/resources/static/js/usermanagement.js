@@ -189,7 +189,7 @@ Ext.define('Posis.view.UserForm', {
 		allowBlank: false
 	}, {
 		inputType: 'password',
-		fieldLabel: 'Confirm Password',
+		fieldLabel: 'Cofirm Password',
 		name: 'confirmpassword',
 		allowBlank: false
 	}, {
@@ -277,11 +277,46 @@ Ext.define('Posis.controller.UserController', {
 		var hasPasswordMatch =
 			 userform.findField('password').getValue() == userform.findField('confirmpassword').getValue();
 		if (userform.isValid() && hasPasswordMatch) {
-			console.log("user created");
-			userformwindow.close();
+			console.log("user is to be created");
+			this.executeCreateUserRequest(userform, userformwindow);
+		} else if (!hasPasswordMatch) {
+			Ext.Msg.alert('Notice', 'Passwords dont match.', Ext.emptyFn);
 		} else {
 			console.log("invalid");
 		}
+	},
+	executeCreateUserRequest: function(userform, userformwindow) {
+		console.log("ajax request");
+		var userData = {};
+		userData.roles = [];
+		userData = Object.assign(userData, userform.getValues());
+		userData.status = "ENABLED";
+		if (userData.isUser) userData.roles.push({ "id": userData.isUser });
+		if (userData.isAdmin) userData.roles.push({ "id": userData.isAdmin });
+		delete userData['confirmpassword'];
+		delete userData['isUser'];
+		delete userData['isAdmin'];
+		var pagingtoolbar = Ext.getCmp('userPagingToolbar');
+		Ext.Ajax.request({
+			url: '/posis/users/',
+			method: 'PUT',
+			jsonData: userData,
+
+			success: function(response) {
+				var jsonResponse = JSON.parse(response.responseText);
+				if (jsonResponse.status == 201) {
+					userformwindow.close();
+					Ext.Msg.alert('Success', jsonResponse.prompt, function() { pagingtoolbar.doRefresh(); });					
+					return;
+				} 
+				Ext.Msg.alert('Notice', jsonResponse.prompt, Ext.emptyFn);
+			},
+			failure: function(response) {
+				console.log("Something went wrong.");
+				Ext.Msg.alert('Error', 'Something went wrong.', Ext.emptyFn);
+			}	
+		});
+
 	},
 	updateUser: function() {
 		var userformwindow = this.getUserFormWindow();
