@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.codeyasam.posis.domain.security.EndUser;
 import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.exception.UserAlreadyExistException;
+import com.codeyasam.posis.exception.UserNotFoundException;
 import com.codeyasam.posis.service.UserService;
 
 @RunWith(SpringRunner.class)
@@ -116,5 +117,16 @@ public class EndUserIntegrationTest {
 	public void retrieveCountAll() {
 		long count = userService.retrieveCountBySpecification("");
 		assertEquals(2, count);
+	}
+	
+	@Test
+	public void retrieveByUsername() throws UserNotFoundException {
+		EndUser user = userService.retrieveByUsername("codeyasam");
+		assertEquals("codeyasam", user.getUsername());
+	}
+	
+	@Test(expected=UserNotFoundException.class)
+	public void retrieveByUsernameWithUserNotFoundException() throws UserNotFoundException {
+		userService.retrieveByUsername("randomq341");
 	}
 }
