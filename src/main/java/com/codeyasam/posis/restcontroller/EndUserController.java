@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -73,6 +74,12 @@ public class EndUserController {
 		response.setData(userList);
 		response.setTotal(userService.retrieveCountBySpecification(text));
 		response.setStatus(HttpStatus.OK);
+		return response;
+	}
+	
+	@RequestMapping(value="/{username}", method=RequestMethod.GET)
+	public SingleDataResponse<EndUserDTO> retrieveUserByUsername(@PathVariable String username) {
+		SingleDataResponse<EndUserDTO> response = new SingleDataResponse<>();
 		return response;
 	}
 		
