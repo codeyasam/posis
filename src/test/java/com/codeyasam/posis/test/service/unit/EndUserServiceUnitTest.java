@@ -44,7 +44,7 @@ public class EndUserServiceUnitTest {
 	
 	@Test
 	public void createUser() throws UserAlreadyExistException {
-		when(userService.retrieveByUsername(anyString())).thenReturn(foundUser);		
+		when(userRepository.findByUsernameIgnoreCase(anyString())).thenReturn(foundUser);		
 		
 		EndUser newUser = new EndUser();
 		newUser.setFirstName("emman");
