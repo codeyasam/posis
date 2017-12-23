@@ -47,13 +47,9 @@ public class UserService implements UserDetailsService {
 		passwordEncoder = new BCryptPasswordEncoder();
 	}
 	
-	public Optional<EndUser> retrieveByUsername(String username) {
-		return userRepository.findByUsernameIgnoreCase(username);
-	}
-	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<EndUser> foundUser = retrieveByUsername(username);
+		Optional<EndUser> foundUser = userRepository.findByUsernameIgnoreCase(username);
 		if (!foundUser.isPresent()) {
 			throw new UsernameNotFoundException("User with username: " + username + " not found");
 		}
@@ -62,7 +58,7 @@ public class UserService implements UserDetailsService {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public EndUser createUser(EndUser user) throws UserAlreadyExistException {
-		Optional<EndUser> foundUser = retrieveByUsername(user.getUsername());
+		Optional<EndUser> foundUser = userRepository.findByUsernameIgnoreCase(user.getUsername());
 		if (foundUser.isPresent()) {
 			throw new UserAlreadyExistException("User with username: " + user.getUsername() + " already exists.");
 		}
@@ -71,7 +67,7 @@ public class UserService implements UserDetailsService {
 	}
 	
 	public EndUser updateUser(EndUser user) {
-		Optional<EndUser> foundUser = retrieveByUsername(user.getUsername());
+		Optional<EndUser> foundUser = userRepository.findByUsernameIgnoreCase(user.getUsername());
 		if (!foundUser.isPresent()) {
 			throw new UsernameNotFoundException("User with username: " + user.getUsername() + " not found");
 		}
@@ -84,6 +80,14 @@ public class UserService implements UserDetailsService {
 		}
 		userRepository.delete(user);
 	}
+	
+	public EndUser retrieveByUsername(String username) throws UserNotFoundException {
+		Optional<EndUser> foundUser = userRepository.findByUsernameIgnoreCase(username);
+		if (!foundUser.isPresent()) {
+			throw new UserNotFoundException("User with username: " + username + " not found.");
+		}
+		return foundUser.get();
+	}	
 	
 	public List<EndUser> retrieveAllUser(Pageable pageable) {
 		List<EndUser> allUsers = new ArrayList<>();
