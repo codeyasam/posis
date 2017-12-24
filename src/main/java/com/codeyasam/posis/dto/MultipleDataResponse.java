@@ -2,14 +2,12 @@ package com.codeyasam.posis.dto;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-
 public class MultipleDataResponse<T> {
 	
 	private long total;
 	private List<T> data;
 	private String prompt;
-	private HttpStatus status;
+	private int status;
 
 	public long getTotal() {
 		return total;
@@ -35,11 +33,11 @@ public class MultipleDataResponse<T> {
 		this.prompt = prompt;
 	}
 
-	public HttpStatus getStatus() {
+	public int getStatus() {
 		return status;
 	}
 
-	public void setStatus(HttpStatus status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 	
