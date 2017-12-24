@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.codeyasam.posis.domain.Inventory;
 import com.codeyasam.posis.domain.PointOfSale;
@@ -28,6 +29,7 @@ public class PointOfSaleControllerIntegrationTest {
 	private InventoryService inventoryService;
 	
 	@Test
+	@Transactional
 	public void createPointOfSale() {
 		Inventory inventory = inventoryService.retrieveById(1);
 		int initialStockQty = inventory.getStockQuantity();
