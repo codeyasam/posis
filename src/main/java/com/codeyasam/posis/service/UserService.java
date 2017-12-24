@@ -66,11 +66,23 @@ public class UserService implements UserDetailsService {
 		return userRepository.save(user);
 	}
 	
-	public EndUser updateUser(EndUser user) {
+	public EndUser updateUser(EndUser user) throws UserNotFoundException {
 		Optional<EndUser> foundUser = userRepository.findByUsernameIgnoreCase(user.getUsername());
 		if (!foundUser.isPresent()) {
-			throw new UsernameNotFoundException("User with username: " + user.getUsername() + " not found");
+			throw new UserNotFoundException("User with username: " + user.getUsername() + " not found");
 		}
+		
+		foundUser.get().setFirstName(user.getFirstName());
+		foundUser.get().setLastName(user.getLastName());
+		foundUser.get().setRoles(user.getRoles());
+		foundUser.get().setPassword(passwordEncoder.encode(user.getPassword()));
+		user = userRepository.save(foundUser.get());
+		return user;
+	}
+	
+	public EndUser disableUser(EndUser user) throws UserNotFoundException {
+		user = retrieveByUsername(user.getUsername());
+		user.setStatus("DISABLED");
 		return userRepository.save(user);
 	}
 	
