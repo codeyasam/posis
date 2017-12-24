@@ -53,9 +53,11 @@ public class EndUser {
 	private LocalDateTime lastModifiedDate;
 
 	@CreatedBy
+	@Column(updatable=false)
 	private String createdBy;
 	
 	@LastModifiedBy
+	@Column(insertable=false)
 	private String lastModifiedBy;
 	
 	public long getId() {
