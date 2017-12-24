@@ -1,6 +1,7 @@
 package com.codeyasam.posis.test.service.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.List;
 
@@ -46,6 +47,19 @@ public class EndUserIntegrationTest {
 		user.setUsername("CODEYASAM");
 		user.setPassword("secret");
 		userService.createUser(user);		
+	}
+	
+	@Test
+	@Transactional
+	public void updateUser() throws UserNotFoundException {
+		EndUser user = new EndUser();
+		user.setFirstName("emman");
+		user.setLastName("yasa");
+		user.setUsername("CODEYASAM");
+		user.setPassword("secret");
+		user = userService.updateUser(user);
+		assertNotEquals("secret", user.getPassword());
+		assertEquals(1, user.getId());
 	}
 
 	@Test
