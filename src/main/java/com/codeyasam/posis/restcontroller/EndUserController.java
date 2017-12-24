@@ -1,5 +1,6 @@
 package com.codeyasam.posis.restcontroller;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,9 +53,23 @@ public class EndUserController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public ResponseEntity<EndUser> updateUser(@RequestBody EndUser user) {
-		user = userService.updateUser(user);
-		return new ResponseEntity<>(user, HttpStatus.OK);
+	public SingleDataResponse<EndUserDTO> updateUser(@RequestBody EndUser user) throws UserNotFoundException {
+		SingleDataResponse<EndUserDTO> response = new SingleDataResponse<>();
+		EndUserDTO userDTO = convertToDTO(userService.updateUser(user));
+		response.setData(userDTO);
+		response.setPrompt("User successfully updated.");
+		response.setStatus(HttpStatus.OK.value());
+		return response;
+	}
+	
+	@RequestMapping(value="/disableUser", method=RequestMethod.POST)
+	public SingleDataResponse<EndUserDTO> disableUser(@RequestBody EndUser user) throws UserNotFoundException {
+		SingleDataResponse<EndUserDTO> response = new SingleDataResponse<>();
+		EndUserDTO userDTO = convertToDTO(userService.disableUser(user));
+		response.setData(userDTO);
+		response.setPrompt("User is now disabled.");
+		response.setStatus(HttpStatus.OK.value());
+		return response;
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.DELETE)
@@ -73,19 +87,25 @@ public class EndUserController {
 			.collect(Collectors.toList());
 		response.setData(userList);
 		response.setTotal(userService.retrieveCountBySpecification(text));
-		response.setStatus(HttpStatus.OK);
+		response.setStatus(HttpStatus.OK.value());
 		return response;
 	}
 	
-	@RequestMapping(value="/{username}", method=RequestMethod.GET)
-	public SingleDataResponse<EndUserDTO> retrieveUserByUsername(@PathVariable String username) {
+	@RequestMapping(value="/searchByUsername", method=RequestMethod.GET)
+	public SingleDataResponse<EndUserDTO> retrieveUserByUsername(@RequestParam String username) throws UserNotFoundException {
 		SingleDataResponse<EndUserDTO> response = new SingleDataResponse<>();
+		EndUserDTO userDTO = convertToDTO(userService.retrieveByUsername(username));
+		response.setData(userDTO);
+		response.setStatus(HttpStatus.OK.value());
 		return response;
 	}
 		
 	private EndUserDTO convertToDTO(EndUser user) {
 		EndUserDTO endUserDTO = modelMapper.map(user, EndUserDTO.class);
 		endUserDTO.setRoles(user.getRoles());
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		if (user.getCreatedDate() != null) endUserDTO.setCreatedDate(user.getCreatedDate().format(formatter));
+		if (user.getLastModifiedDate() != null) endUserDTO.setLastModifiedDate(user.getLastModifiedDate().format(formatter));
 		return endUserDTO;
 	}
 }
