@@ -13,6 +13,11 @@ public class EndUserDTO {
 	private String status;
 	
 	private Set<Role> roles;
+	
+	private String createdBy;
+	private String lastModifiedBY;
+	private String createdDate;
+	private String lastModifiedDate;
 
 	public long getId() {
 		return id;
@@ -60,6 +65,38 @@ public class EndUserDTO {
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public String getLastModifiedBY() {
+		return lastModifiedBY;
+	}
+
+	public void setLastModifiedBY(String lastModifiedBY) {
+		this.lastModifiedBY = lastModifiedBY;
+	}
+
+	public String getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(String createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(String lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
 	}
 	
 	
