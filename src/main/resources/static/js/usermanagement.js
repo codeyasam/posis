@@ -1,6 +1,6 @@
 Ext.define('Posis.model.UserModel', {
 	extend: 'Ext.data.Model',
-	fields: ['id', 'firstName', 'lastName', 'username', 'status'],
+	fields: ['id', 'firstName', 'lastName', 'username', 'status', 'createdBy', 'createdDate', 'lastModifiedBy', 'lastModifiedDate'],
 	hasMany: [{
 		model: 'Posis.model.RoleModel',
 		name: 'roles'
@@ -23,7 +23,7 @@ Ext.define('Posis.store.UserStore', {
 	// }
 	proxy: {
 		type: 'ajax',
-		url: '/posis/users/?size=5',
+		url: '/posis/users/?size=5&sort=id',
 		reader: {
 			type: 'json',
 			root: 'data',
@@ -34,7 +34,7 @@ Ext.define('Posis.store.UserStore', {
 });
 
 var bufferedStore = new Posis.store.UserStore();
-bufferedStore.getProxy().url = '/posis/users/?size=5';		
+bufferedStore.getProxy().url = '/posis/users/?size=5&sort=id';		
 bufferedStore.load();
 
 Ext.define('Posis.view.UsersList', {
@@ -92,6 +92,18 @@ Ext.define('Posis.view.UsersList', {
 			return values.join("<br/>");
 		}
 	}, {
+		header: 'CREATED BY',
+		dataIndex: 'createdBy'
+	}, {
+		header: 'CREATED DATE',
+		dataIndex: 'createdDate'
+	}, {
+		header: 'LAST MODIFIED BY',
+		dataIndex: 'lastModifiedBy'
+	}, {
+		header: 'LAST MODIFIED DATE',
+		dataIndex: 'lastModifiedDate'
+	}, {
 		header: 'ACTION',
 		renderer: function(value, metaData, record) {
 			var id = Ext.id();
@@ -116,9 +128,9 @@ Ext.define('Posis.view.UsersList', {
 										}
 										Ext.Msg.confirm('Disable User', 
 											'Are you sure you want to disable this user?',
-											function() {
+											function(button) {
 												if (button == 'yes') {
-													Ext.getCmp('mainContainer').updateLayout();
+													disableUser(record.data.username);
 												}
 										});
 									}
@@ -141,7 +153,7 @@ Ext.define('Posis.view.UsersList', {
         listeners: {
         	beforechange: function(pagingtoolbar, page, eOpts) {
         		var searchText = Ext.getCmp('userSearchField').getValue();
-        		bufferedStore.getProxy().url = '/posis/users/?size=5' 
+        		bufferedStore.getProxy().url = '/posis/users/?size=5&sort=id' 
         			+ '&page=' + encodeURIComponent(page) + '&search=' + encodeURIComponent(searchText);
         		bufferedStore.load();
         		var usersList = Ext.getCmp('userslist');
@@ -155,6 +167,38 @@ Ext.define('Posis.view.UsersList', {
     }	
 
 });
+
+function disableUser(username) {
+	var pagingtoolbar = Ext.getCmp('userPagingToolbar');	
+	Ext.Ajax.request({
+		url: '/posis/users/searchByUsername',
+		method: 'GET',
+		params: {"username": username},
+
+		success: function(response) {
+			var jsonResponse = JSON.parse(response.responseText);				
+			if (jsonResponse.status == 200) {
+				var userData = jsonResponse.data;
+				userData.status = 'DISABLED';
+				Ext.Ajax.request({
+					url: '/posis/users/disableUser',
+					method: 'POST',
+					jsonData: userData,
+
+					success: function(response) {
+						jsonResponse = JSON.parse(response.responseText);
+						if (jsonResponse.status == 200) {
+							Ext.Msg.alert('Success', jsonResponse.prompt, Ext.emptyFn);
+							pagingtoolbar.doRefresh();
+						} else {
+							Ext.Msg.alert('Notice', jsonResponse.prompt, Ext.emptyFn);
+						}
+					}
+				});								
+			}
+		}
+	});	
+}
 
 Ext.define('Posis.view.UserFormWindow', {
 	extend: 'Ext.window.Window',
@@ -180,6 +224,7 @@ Ext.define('Posis.view.UserForm', {
 		allowBlank: false
 	}, {
 		fieldLabel: 'Username',
+		id: 'username',
 		name: 'username',
 		allowBlank: false
 	}, {
@@ -197,15 +242,20 @@ Ext.define('Posis.view.UserForm', {
 		fieldLabel: 'access level',
 		horizontal: true,
 		items: [{
+			id: 'isUser',
 			boxLabel: 'User', 
 			name: 'isUser',
 			inputValue: 1,
 			checked: true
 		}, {
+			id: 'isAdmin',
 			boxLabel: 'Admin',
 			name: 'isAdmin',
 			inputValue: 2
 		}]
+	}, {
+		id: 'userStatus',
+		hidden: true
 	}],
 	buttons: [{
 		id: 'userFormOkButton',
@@ -261,19 +311,41 @@ Ext.define('Posis.controller.UserController', {
 		userformwindow.show();
 	},
 	onRowDblClick: function(metaData, record, item, index) {
+		var username = record.data.username;
 		var userform = new Posis.view.UserForm();
 		var userformwindow = this.getUserFormWindow({
 			title: 'Update User',
 			items: [userform]
 		});
-		userform.getForm().findField('password').fieldLabel = 'New Password';
-		userform.getForm().setValues(record.data);
-		Ext.getCmp('userFormOkButton').action = 'edit';
-		userformwindow.show();
+		Ext.getCmp('isUser').setValue(false);
+		Ext.Ajax.request({
+			url: '/posis/users/searchByUsername',
+			method: 'GET',
+			params: {"username": username},
+
+			success: function(response) {
+				var jsonResponse = JSON.parse(response.responseText);				
+				if (jsonResponse.status == 200) {
+					var userData = jsonResponse.data;
+					userform.getForm().findField('password').fieldLabel = 'New Password';
+					Ext.getCmp('username').setReadOnly(true);
+					userform.getForm().setValues(userData);
+					Ext.getCmp('isUser').setValue(false);
+					Ext.getCmp('isAdmin').setValue(false);
+					Ext.getCmp('userStatus').setValue(userData.status);
+					console.log(userData.status);
+					if (userData.roles[0] != null && userData.roles[0].id == 1) Ext.getCmp('isUser').setValue(true);
+					if (userData.roles[1] != null && userData.roles[1].id == 2) Ext.getCmp('isAdmin').setValue(true);
+					Ext.getCmp('userFormOkButton').action = 'edit';
+					userformwindow.show();					
+				}
+			}
+		});
 	},
 	createUser: function() {
 		var userformwindow = this.getUserFormWindow();
 		var userform = userformwindow.down('form').getForm();
+		Ext.getCmp('username').setReadOnly(false);
 		var hasPasswordMatch =
 			 userform.findField('password').getValue() == userform.findField('confirmpassword').getValue();
 		if (userform.isValid() && hasPasswordMatch) {
@@ -286,7 +358,6 @@ Ext.define('Posis.controller.UserController', {
 		}
 	},
 	executeCreateUserRequest: function(userform, userformwindow) {
-		console.log("ajax request");
 		var userData = {};
 		userData.roles = [];
 		userData = Object.assign(userData, userform.getValues());
@@ -326,15 +397,48 @@ Ext.define('Posis.controller.UserController', {
 			 userform.findField('password').getValue() == userform.findField('confirmpassword').getValue();
 		if (userform.isValid() && hasPasswordMatch) {
 			console.log("user updated");
-			userformwindow.close();
+			this.executeUpdateUserRequest(userform, userformwindow);			
+		} else if (!hasPasswordMatch) {
+			Ext.Msg.alert('Notice', 'Passwords dont match.', Ext.emptyFn);
 		} else {
 			console.log("invalid");
 		}
 	},
+	executeUpdateUserRequest: function(userform, userformwindow) {
+		var userData = {};
+		userData.roles = [];
+		userData = Object.assign(userData, userform.getValues());
+		userData.status = Ext.getCmp('userStatus').getValue()
+		if (userData.isUser) userData.roles.push({ "id": userData.isUser });
+		if (userData.isAdmin) userData.roles.push({ "id": userData.isAdmin });
+		delete userData['confirmpassword'];
+		delete userData['isUser'];
+		delete userData['isAdmin'];
+		var pagingtoolbar = Ext.getCmp('userPagingToolbar');		
+		Ext.Ajax.request({
+			url: '/posis/users/',
+			method: 'POST',
+			jsonData: userData, 
+
+			success: function(response) {
+				var jsonResponse = JSON.parse(response.responseText);
+				if (jsonResponse.status == 200) {
+					userformwindow.close();
+					Ext.Msg.alert('Success', jsonResponse.prompt, function() { pagingtoolbar.doRefresh(); });					
+					return;					
+				}
+				Ext.Msg.alert('Notice', jsonResponse.prompt, Ext.emptyFn);				
+			},
+			failure: function(response) {
+				console.log("Something went wrong.");
+				Ext.Msg.alert('Error', 'Something went wrong.', Ext.emptyFn);
+			}
+		});
+	},
 	searchUser: function() {
 		var searchText = Ext.getCmp('userSearchField').getValue();
 		var userStore = new Posis.store.UserStore();
-		userStore.getProxy().url = '/posis/users/?search=' + encodeURIComponent(searchText) + "&size=5";		
+		userStore.getProxy().url = '/posis/users/?search=' + encodeURIComponent(searchText) + "&size=5&sort=id";		
 		var pagingtoolbar = Ext.getCmp('userPagingToolbar');
 		userStore.load(); 
 		var usersList = this.getUsersList();
