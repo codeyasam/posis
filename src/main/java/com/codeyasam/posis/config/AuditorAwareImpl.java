@@ -5,17 +5,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
-public class AuditorAwareImpl implements AuditorAware<User> {
+public class AuditorAwareImpl implements AuditorAware<String> {
 
 	@Override
-	public User getCurrentAuditor() {
-		
+	public String getCurrentAuditor() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication == null || !authentication.isAuthenticated()) {
-			return null;			
+			return null;	
 		}
-		
-		return (User) authentication.getPrincipal(); 
+		return ((User) authentication.getPrincipal()).getUsername(); 
 	}
 
 }
