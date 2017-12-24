@@ -31,7 +31,10 @@ public class ExceptionControllerAdvice {
 	}
 	
 	@ExceptionHandler(UserNotFoundException.class)
-	public void handleUserNotFoundException(UserNotFoundException exception, HttpServletResponse response) throws IOException {
-		response.sendError(HttpStatus.NOT_FOUND.value(), exception.getMessage());
+	public @ResponseBody ExceptionDataResponse handleUserNotFoundException(UserNotFoundException exception) {
+		ExceptionDataResponse response = new ExceptionDataResponse();
+		response.setPrompt(exception.getMessage());
+		response.setStatus(HttpStatus.NOT_FOUND.value());
+		return response;
 	}
 }
