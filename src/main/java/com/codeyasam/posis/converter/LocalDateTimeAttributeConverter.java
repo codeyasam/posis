@@ -11,12 +11,14 @@ public class LocalDateTimeAttributeConverter implements AttributeConverter<Local
 
 	@Override
 	public Timestamp convertToDatabaseColumn(LocalDateTime dateTime) {
-		return Timestamp.valueOf(dateTime);
+		if (dateTime != null) return Timestamp.valueOf(dateTime);
+		return null;
 	}
 
 	@Override
 	public LocalDateTime convertToEntityAttribute(Timestamp timestamp) {
-		return timestamp.toLocalDateTime();
+		if (timestamp != null) return timestamp.toLocalDateTime();
+		return null;
 	}
 
 }
