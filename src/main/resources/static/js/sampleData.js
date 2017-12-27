@@ -16,3 +16,11 @@ var data = [{
 		{"id":1,"role":"ROLE_USER"}
 	]
 }];
+
+var productTypeData = [{
+	"id": 1,
+	"name": "Wand"
+}, {
+	"id": 2,
+	"name": "Owl"
+}]

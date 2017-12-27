@@ -99,10 +99,12 @@ Ext.define('Posis.view.UsersList', {
 		dataIndex: 'createdDate'
 	}, {
 		header: 'LAST MODIFIED BY',
-		dataIndex: 'lastModifiedBy'
+		dataIndex: 'lastModifiedBy',
+		width: 130
 	}, {
 		header: 'LAST MODIFIED DATE',
-		dataIndex: 'lastModifiedDate'
+		dataIndex: 'lastModifiedDate',
+		width: 150
 	}, {
 		header: 'ACTION',
 		renderer: function(value, metaData, record) {

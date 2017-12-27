@@ -10,11 +10,13 @@
 	
 		<script type="text/javascript" th:src="@{/js/sampleData.js}"></script>
 		<script type="text/javascript" th:src="@{/js/usermanagement.js}"></script> 
+		<script type="text/javascript" th:src="@{/js/producttypemanagement.js}"></script> 
 
-<!--	
+	<!--
 		<script type="text/javascript" src="../static/js/sampleData.js"></script>
-		<script type="text/javascript" src="../static/js/usermanagement.js"></script>		
--->
+		<script type="text/javascript" src="../static/js/usermanagement.js"></script>	
+		<script type="text/javascript" src="../static/js/producttypemanagement.js"></script>	-->
+
 	
 		<script type="text/javascript">
 			Ext.define('Posis.view.MainContainer', {
@@ -22,7 +24,7 @@
 				alias: 'widget.maincontainer',
 				id: 'mainContainer',
 				fullscreen: true,
-				activeTab: 1,
+				activeTab: 2,
 				listeners: {
 					tabchange: function(panel, tab) {
 						panel.updateLayout();
@@ -40,6 +42,14 @@
 			        	}
 			        }	 
 			    }, {
+			    	title: 'MANAGE PRODUCT CATEGORIES',
+			    	html: '<div id="manageProductType"></div>',
+			    	listeners: {
+			    		render: function() {
+			    			Ext.widget('producttypeslist', {renderTo: 'manageProductType'});
+			    		}
+			    	}
+			    }, {
 			    	title: 'TEST PANEL',
 			    	html: '<div id="testpanel"></div>'
 			    }]
@@ -48,7 +58,7 @@
 			Ext.onReady(function() {
 				Ext.application({
 					name: 'Posis',
-					stores: ['UserStore'],
+					stores: ['UserStore', 'ProductTypeStore'],
 					controllers: ['UserController'],
 					launch: function() {
 						var mainpanel = new Posis.view.MainContainer({
