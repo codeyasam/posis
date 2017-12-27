@@ -28,11 +28,11 @@ var productTypeBufferedStore = new Posis.store.ProductTypeStore();
 productTypeBufferedStore.getProxy().url = '/posis/endproduct/type/?size=5&sort=id';		
 productTypeBufferedStore.load();
 
-Ext.define('Posis.view.ProductCategoriesList', {
+Ext.define('Posis.view.ProductTypesList', {
 	extend: 'Ext.grid.Panel',
 	title: 'Product Categories',
-	alias: 'widget.ProductCategoriesList',
-	id: 'ProductCategoriesList',
+	alias: 'widget.producttypeslist',
+	id: 'producttypeslist',
 	store: 'ProductTypeStore',
 	height: 250,
 	scrollable: true,
@@ -85,10 +85,10 @@ Ext.define('Posis.view.ProductCategoriesList', {
         		productTypeBufferedStore.getProxy().url = '/posis/endproduct/type/?size=5&sort=id'; 
         			+ '&page=' + encodeURIComponent(page) + '&search=' + encodeURIComponent(searchText);
         		productTypeBufferedStore.load();
-        		var ProductCategoriesList = Ext.getCmp('ProductCategoriesList');
+        		var productTypesList = Ext.getCmp('producttypeslist');
         		var mainContainer = Ext.getCmp('mainContainer');
         		setTimeout(function() {
-        			ProductCategoriesList.reconfigure(productTypeBufferedStore);
+        			productTypesList.reconfigure(productTypeBufferedStore);
         			mainContainer.updateLayout();
         		}, 500);
         	}
@@ -96,20 +96,94 @@ Ext.define('Posis.view.ProductCategoriesList', {
     }	
 });
 
+Ext.define('Posis.view.ProductTypeFormWindow', {
+	extend: 'Ext.window.Window',
+	alias: 'widget.producttypeformwindow',
+	width: 300,
+	layout: 'fit',
+	modal: true
+});
+
+Ext.define('Posis.view.ProductTypeForm', {
+	extend: 'Ext.form.Panel',
+	alias: 'widget.producttypeform',
+	margin: 5,
+	border: false,
+	defaultType: 'textfield',
+	items: [{
+		fieldLabel: 'Category Name',
+		name: 'name',
+		allowBlank: false
+	}],
+	buttons: [{
+		id: 'productTypeFormOkButton',
+		text: 'SUBMIT'
+	}]
+});
+
 Ext.define('Posis.controller.ProductTypeController', {
 	extend: 'Ext.app.Controller',
-	views: ['ProductCategoriesList'],
+	views: ['ProductTypeFormWindow', 'ProductTypesList'],
 	refs: [{
-		ref: 'ProductCategoriesList',
-		xtype: 'ProductCategoriesList',
-		selector: 'ProductCategoriesList'
+		ref: 'productTypeFormWindow',
+		xtype: 'producttypeformwindow',
+		selector: 'producttypeformwindow',
+		autoCreate: true
+	}, {
+		ref: 'productTypesList',
+		xtype: 'producttypeslist',
+		selector: 'producttypeslist'
 	}],
 	init: function() {
 		this.control({
-			'ProductCategoriesList > toolbar > textfield[action=search]': {
+			'producttypeslist > toolbar > button[action=add]': {
+				click: this.showProductCategoryForm
+			},
+			'producttypeslist > toolbar > textfield[action=search]': {
 				keyup: this.searchProductType
+			}, 
+			'producttypeformwindow button[action=add]': {
+				click: this.createProductType
 			}
 		});
+	},
+	showProductCategoryForm: function() {
+		console.log("show product category form clicked");
+		var producttypeform =  new Posis.view.ProductTypeForm();
+		var producttypeformwindow = this.getProductTypeFormWindow({
+			title: 'Create Product Category',
+			items: [producttypeform]
+		});
+		Ext.getCmp('productTypeFormOkButton').action = 'add';
+		producttypeformwindow.show();
+	},
+	createProductType: function() {
+		var producttypeformwindow = this.getProductTypeFormWindow();
+		var producttypeform = producttypeformwindow.down('form').getForm();
+		var productTypeData = producttypeform.getValues();
+		var pagingtoolbar = Ext.getCmp('productTypePagingToolbar');
+		console.log(productTypeData);
+		if (producttypeform.isValid()) {
+			Ext.Ajax.request({
+				url: '/posis/endproduct/type/',
+				method: 'PUT',
+				jsonData: productTypeData,
+
+				success: function(response) {
+					var jsonResponse = JSON.parse(response.responseText);
+					if (jsonResponse.status == 201) {
+						producttypeformwindow.close();
+						Ext.Msg.alert('Success', jsonResponse.prompt, function() { pagingtoolbar.doRefresh(); });
+						return;
+					}
+					Ext.Msg.alert('Notice', jsonResponse.prompt, Ext.emptyFn);
+				},
+				failure: function(response) {
+					console.log("Something went wrong.");
+					Ext.Msg.alert('Error', 'Something went wrong', Ext.emptyFn);
+				} 
+			});
+		}
 	},
 	searchProductType: function() {
 		var searchText = Ext.getCmp('productTypeSearchField').getValue();
@@ -117,11 +191,14 @@ Ext.define('Posis.controller.ProductTypeController', {
 		productTypeStore.getProxy().url = '/posis/endproduct/type/?search=' + encodeURIComponent(searchText) + '&?size=5&sort=id';
 		var pagingtoolbar = Ext.getCmp('productTypePagingToolbar');
 		productTypeStore.load();
-		var ProductCategoriesList = this.getProductCategoriesList();
+		var productTypesList = this.getProductTypesList();
 		setTimeout(function() {
-			ProductCategoriesList.reconfigure(productTypeStore);
+			productTypesList.reconfigure(productTypeStore);
 			productTypeBufferedStore.totalCount = productTypeStore.getTotalCount();
 			pagingtoolbar.onLoad();
 		}, 500);
 	}
 });
+
+
+
