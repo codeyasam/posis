@@ -3,15 +3,19 @@ package com.codeyasam.posis.restcontroller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codeyasam.posis.domain.ProductType;
+import com.codeyasam.posis.dto.MultipleDataResponse;
+import com.codeyasam.posis.dto.SingleDataResponse;
+import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.service.ProductTypeService;
 
 @RestController
@@ -30,15 +34,34 @@ public class ProductTypeController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.PUT)
-	public ResponseEntity<?> addProductType(@RequestBody ProductType productType) {
+	public SingleDataResponse<ProductType> addProductType(@RequestBody ProductType productType) {
+		SingleDataResponse<ProductType> response = new SingleDataResponse<>();
 		productType = productTypeService.addProductType(productType);
-		return new ResponseEntity<ProductType>(productType, HttpStatus.CREATED);
+		response.setData(productType);
+		response.setPrompt("Product Category successfully created");
+		response.setStatus(HttpStatus.CREATED.value());
+		return response;
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public ResponseEntity<?> saveProductType(@RequestBody ProductType productType) {
+	public SingleDataResponse<ProductType> saveProductType(@RequestBody ProductType productType) {
+		SingleDataResponse<ProductType> response = new SingleDataResponse<>();
 		productType = productTypeService.saveProductType(productType);
-		return new ResponseEntity<ProductType>(productType, HttpStatus.OK);
+		response.setData(productType);
+		response.setPrompt("Product Category successfully updated");
+		response.setStatus(HttpStatus.OK.value());
+		return response;
+	}
+	
+	@RequestMapping(value="/", method=RequestMethod.GET)
+	public MultipleDataResponse<ProductType> retrieveProductTypesBySearch(@RequestParam(value="search", defaultValue="") String text, Pageable pageable) throws PageNotFoundException {
+		MultipleDataResponse<ProductType> response = new MultipleDataResponse<>();
+		List<ProductType> productTypeList = productTypeService.retrieveInSpecifiedColumns(text, pageable);
+		response.setData(productTypeList);
+		response.setPrompt("Retrieved searched product categories");
+		response.setTotal(productTypeService.retrieveCountBySpecification(text));
+		response.setStatus(HttpStatus.OK.value());
+		return response;
 	}
 	
 	@RequestMapping(value="/{name}", method=RequestMethod.GET)
@@ -51,8 +74,12 @@ public class ProductTypeController {
 		return productTypeService.retrieveByTypeNameContaining(text);
 	}
 	
-	@RequestMapping(value="/", method=RequestMethod.GET)
-	public List<ProductType> retrieveAllProduct() {
-		return productTypeService.retrieveAllProductType();
+	public MultipleDataResponse<ProductType> retrieveAllProduct() {
+		MultipleDataResponse<ProductType> response = new MultipleDataResponse<>();
+		List<ProductType> productTypeList = productTypeService.retrieveAllProductType();
+		response.setData(productTypeList);
+		response.setPrompt("Retrieved all product types");
+		response.setStatus(HttpStatus.OK.value());
+		return response;
 	}
 }
