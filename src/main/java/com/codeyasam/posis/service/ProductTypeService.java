@@ -62,6 +62,10 @@ public class ProductTypeService {
 		return productTypeRepository.findByName(name);
 	}
 	
+	public ProductType retrieveById(long id) {
+		return productTypeRepository.findOne(id);
+	}
+	
 	public List<ProductType> retrieveByTypeNameContaining(String text) {
 		return productTypeRepository.findByNameContaining(text);
 	}
