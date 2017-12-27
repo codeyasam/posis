@@ -84,6 +84,16 @@ public class ProductTypeController {
 		return productTypeService.retrieveByTypeNameContaining(text);
 	}
 	
+	@RequestMapping(value="/searchById", method=RequestMethod.GET)
+	public SingleDataResponse<ProductTypeDTO> retrieveByProductId(@RequestParam long id) {
+		SingleDataResponse<ProductTypeDTO> response = new SingleDataResponse<>();
+		ProductType productType = productTypeService.retrieveById(id);
+		response.setData(convertToDTO(productType));
+		response.setPrompt("Successfully retrieved user");
+		response.setStatus(HttpStatus.OK.value());
+		return response;
+	}
+	
 	public MultipleDataResponse<ProductType> retrieveAllProduct() {
 		MultipleDataResponse<ProductType> response = new MultipleDataResponse<>();
 		List<ProductType> productTypeList = productTypeService.retrieveAllProductType();
