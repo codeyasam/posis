@@ -111,9 +111,14 @@ Ext.define('Posis.view.ProductTypeForm', {
 	border: false,
 	defaultType: 'textfield',
 	items: [{
+		id: 'productTypeName',
 		fieldLabel: 'Category Name',
 		name: 'name',
 		allowBlank: false
+	}, {
+		id: 'productTypeId',
+		name: 'id',
+		hidden: true
 	}],
 	buttons: [{
 		id: 'productTypeFormOkButton',
@@ -139,11 +144,17 @@ Ext.define('Posis.controller.ProductTypeController', {
 			'producttypeslist > toolbar > button[action=add]': {
 				click: this.showProductCategoryForm
 			},
-			'producttypeslist > toolbar > textfield[action=search]': {
-				keyup: this.searchProductType
-			}, 
+			'producttypeslist': {
+				itemdblclick: this.onRowDblClick
+			},
 			'producttypeformwindow button[action=add]': {
 				click: this.createProductType
+			},
+			'producttypeformwindow button[action=edit]': {
+				click: this.updateProductType
+			},			
+			'producttypeslist > toolbar > textfield[action=search]': {
+				keyup: this.searchProductType
 			}
 		});
 	},
@@ -156,6 +167,30 @@ Ext.define('Posis.controller.ProductTypeController', {
 		});
 		Ext.getCmp('productTypeFormOkButton').action = 'add';
 		producttypeformwindow.show();
+	},
+	onRowDblClick: function(metaData, record, item, index) {
+		console.log("double clicked row")
+		var productTypeId = record.data.id;
+		var producttypeform = new Posis.view.ProductTypeForm();
+		var producttypeformwindow = this.getProductTypeFormWindow({
+			title: 'Update Product Category',
+			items: [producttypeform]
+		});
+		Ext.Ajax.request({
+			url: '/posis/endproduct/type/searchById?id=' + productTypeId,
+			method: 'GET',
+
+			success: function(response) {
+				var jsonResponse = JSON.parse(response.responseText);
+				if (jsonResponse.status == 200) {
+					Ext.getCmp('productTypeName').setValue(jsonResponse.data.name);
+					Ext.getCmp('productTypeId').setValue(jsonResponse.data.id);
+					Ext.getCmp('productTypeFormOkButton').action = 'edit';
+					producttypeformwindow.show();
+				}
+			}
+
+		});
 	},
 	createProductType: function() {
 		var producttypeformwindow = this.getProductTypeFormWindow();
@@ -182,6 +217,33 @@ Ext.define('Posis.controller.ProductTypeController', {
 					console.log("Something went wrong.");
 					Ext.Msg.alert('Error', 'Something went wrong', Ext.emptyFn);
 				} 
+			});
+		}
+	},
+	updateProductType: function() {
+		var producttypeformwindow = this.getProductTypeFormWindow();
+		var producttypeform = producttypeformwindow.down('form').getForm();
+		var productTypeData = producttypeform.getValues();
+		var pagingtoolbar = Ext.getCmp('productTypePagingToolbar');
+		if (producttypeform.isValid()) {
+			Ext.Ajax.request({
+				url: '/posis/endproduct/type/',
+				method: 'POST',
+				jsonData: productTypeData,
+
+				success: function(response) {
+					var jsonResponse = JSON.parse(response.responseText);
+					if (jsonResponse.status == 200) {
+						producttypeformwindow.close();
+						Ext.Msg.alert('Success', jsonResponse.prompt, function() { pagingtoolbar.doRefresh(); });
+						return;
+					}	
+					Ext.Msg.alert('Notice', jsonResponse.prompt, Ext.emptyFn);
+				},
+				failure: function(response) {
+					console.log("Something went wrong.");
+					Ext.Msg.alert('Error', 'Something went wrong.', Ext.emptyFn);
+				}
 			});
 		}
 	},
