@@ -53,7 +53,7 @@ public class ProductTypeService {
 		Page<ProductType> page = productTypeRepository.findAll(Specifications.where(ProductTypeSpecification.textInSpecifiedColumns(text)), pageable); 
 		page.forEach(foundProductTypes::add);
 		if (foundProductTypes.isEmpty()) {
-			throw new PageNotFoundException("No users found on page: " + pageable.getPageNumber() + ", with value of: " + text);
+			throw new PageNotFoundException("No product types found on page: " + pageable.getPageNumber() + ", with value of: " + text);
 		}
 		return foundProductTypes;
 	}
