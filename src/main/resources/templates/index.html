@@ -46,7 +46,7 @@
 			    	html: '<div id="manageProductType"></div>',
 			    	listeners: {
 			    		render: function() {
-			    			Ext.widget('producttypeslist', {renderTo: 'manageProductType'});
+			    			Ext.widget('ProductCategoriesList', {renderTo: 'manageProductType'});
 			    		}
 			    	}
 			    }, {
@@ -59,7 +59,7 @@
 				Ext.application({
 					name: 'Posis',
 					stores: ['UserStore', 'ProductTypeStore'],
-					controllers: ['UserController'],
+					controllers: ['UserController', 'ProductTypeController'],
 					launch: function() {
 						var mainpanel = new Posis.view.MainContainer({
 							renderTo: 'container'
