@@ -1,5 +1,7 @@
 package com.codeyasam.posis.test.service.unit;
 
+import javax.persistence.EntityManager;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,11 +15,13 @@ public class ProductTypeServiceUnitTest {
 	
 	private ProductTypeService productTypeService;
 	private ProductTypeRepository productTypeRepositoryMock;
+	private EntityManager entityManager;
 	
 	@Before
 	public void setUp() {
 		productTypeRepositoryMock = Mockito.mock(ProductTypeRepository.class);
-		productTypeService = new ProductTypeService(productTypeRepositoryMock);
+		entityManager = Mockito.mock(EntityManager.class);
+		productTypeService = new ProductTypeService(productTypeRepositoryMock, entityManager);
 		ProductType productType = new ProductType();
 		productType.setId(1);
 		productType.setProductType("New Product!");
