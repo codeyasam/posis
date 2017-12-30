@@ -23,6 +23,12 @@ public class EndProductServiceIntegrationTest {
 	private EndProductService endProductService;
 	
 	@Test
+	public void retrieveBySearch() throws PageNotFoundException {
+		List<EndProduct> endProductList = endProductService.retrieveBySearch("Bag", new PageRequest(0, 5));
+		Assert.assertEquals(4, endProductList.size());
+	}
+	
+	@Test
 	public void retrieveAllPaginated() {
 		List<EndProduct> endProductList = endProductService.retrieveAllProduct(new PageRequest(0, 3));
 		Assert.assertEquals(endProductService.retrieveAllProduct().size(), 4);

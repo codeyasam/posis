@@ -4,6 +4,8 @@ package com.codeyasam.posis.test.service.unit;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,12 +24,14 @@ public class EndProductServiceUnitTest {
 	private EndProductService endProductService;
 	private EndProductRepository endProductRepositoryMock;
 	private ProductTypeRepository productTypeRepositoryMock;
+	private EntityManager entityManager;
 	
 	@Before
 	public void setUp() {
 		endProductRepositoryMock = Mockito.mock(EndProductRepository.class);
 		productTypeRepositoryMock = Mockito.mock(ProductTypeRepository.class);
-		endProductService = new EndProductService(endProductRepositoryMock);
+		entityManager = Mockito.mock(EntityManager.class);
+		endProductService = new EndProductService(endProductRepositoryMock, entityManager);
 	
 		setupMockedEndProductType();
 		setupMockedEndProduct();
