@@ -8,7 +8,8 @@ import org.junit.runners.Suite;
 	EndProductTestSuite.class,
 	InventoryTestSuite.class,
 	PointOfSaleTestSuite.class,
-	EndUserTestSuite.class
+	EndUserTestSuite.class,
+	TagTestSuite.class
 })
 public class ContinuousIntegration {
 
