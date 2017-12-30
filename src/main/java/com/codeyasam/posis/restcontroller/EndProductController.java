@@ -1,11 +1,13 @@
 package com.codeyasam.posis.restcontroller;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codeyasam.posis.domain.EndProduct;
+import com.codeyasam.posis.dto.EndProductDTO;
+import com.codeyasam.posis.dto.MultipleDataResponse;
+import com.codeyasam.posis.dto.SingleDataResponse;
+import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.service.EndProductService;
 
 @RestController
@@ -21,26 +27,60 @@ import com.codeyasam.posis.service.EndProductService;
 public class EndProductController {
 	
 	private EndProductService endProductService;
+	private ModelMapper modelMapper;
 	
 	public EndProductController() {
 		
 	}
 	
 	@Autowired
-	public EndProductController(EndProductService endProductService) {
+	public EndProductController(EndProductService endProductService, ModelMapper modelMapper) {
 		this.endProductService = endProductService;
+		this.modelMapper = modelMapper;
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.PUT)
-	public ResponseEntity<?> addProduct(@RequestBody EndProduct product) {
+	public SingleDataResponse<EndProductDTO> addProduct(@RequestBody EndProduct product) {
+		SingleDataResponse<EndProductDTO> response = new SingleDataResponse<>();
 		product = endProductService.addProduct(product);
-		return new ResponseEntity<EndProduct>(product, HttpStatus.CREATED);
+		response.setData(convertToDTO(product));
+		response.setPrompt("Product Successfully Created.");
+		response.setStatus(HttpStatus.CREATED.value());
+		return response;
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public ResponseEntity<?> saveProduct(@RequestBody EndProduct product) {
+	public SingleDataResponse<EndProductDTO> saveProduct(@RequestBody EndProduct product) {
+		SingleDataResponse<EndProductDTO> response = new SingleDataResponse<>();
 		product = endProductService.saveProduct(product);
-		return new ResponseEntity<EndProduct>(product, HttpStatus.OK);
+		response.setData(convertToDTO(product));
+		response.setPrompt("Product Successfully Updated");
+		response.setStatus(HttpStatus.OK.value());
+		return response;
+	}
+	
+	@RequestMapping(value="/searchById", method=RequestMethod.GET)
+	public SingleDataResponse<EndProductDTO> retrieveById(@RequestParam long id) {
+		SingleDataResponse<EndProductDTO> response = new SingleDataResponse<>();
+		EndProduct product = endProductService.retrieveById(id);
+		response.setData(convertToDTO(product));
+		response.setPrompt("Product Successfully retrieved by Id");
+		response.setStatus(HttpStatus.OK.value());
+		return response;
+	}
+	
+	@RequestMapping(value="/", method=RequestMethod.GET)
+	public MultipleDataResponse<EndProductDTO> retrieveBySearch(@RequestParam(value="search", defaultValue="") String text, Pageable pageable) throws PageNotFoundException {
+		MultipleDataResponse<EndProductDTO> response = new MultipleDataResponse<>();
+		List<EndProductDTO> productDTOList = endProductService.retrieveBySearch(text, pageable)
+				.stream()
+				.map(product -> convertToDTO(product))
+				.collect(Collectors.toList());
+		
+		response.setData(productDTOList);
+		response.setPrompt("Product Successfully Retrieve by search.");
+		response.setStatus(HttpStatus.OK.value());
+		return response;
 	}
 	
 	@RequestMapping(value="/{name}", method=RequestMethod.GET)
@@ -62,5 +102,13 @@ public class EndProductController {
 	public List<EndProduct> retrieveAllProductType(Pageable pageable) {
 		return endProductService.retrieveAllProduct(pageable);
 	}	
+	
+	private EndProductDTO convertToDTO(EndProduct product) {
+		EndProductDTO endProductDTO = modelMapper.map(product, EndProductDTO.class);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		if (product.getCreatedDate() != null) endProductDTO.setCreatedDate(product.getCreatedDate().format(formatter));
+		if (product.getLastModifiedDate() != null) endProductDTO.setLastModifiedDate(product.getLastModifiedDate().format(formatter));
+		return endProductDTO;
+	}
 	
 }

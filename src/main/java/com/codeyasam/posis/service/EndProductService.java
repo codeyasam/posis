@@ -3,11 +3,21 @@ package com.codeyasam.posis.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import com.codeyasam.posis.domain.EndProduct;
+import com.codeyasam.posis.domain.specification.EndProductSpecification;
 import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.repository.EndProductRepository;
 
@@ -15,14 +25,16 @@ import com.codeyasam.posis.repository.EndProductRepository;
 public class EndProductService {
 	
 	private EndProductRepository endProductRepository;
+	private EntityManager entityManager;
 	
 	public EndProductService() {
 		
 	}
 	
 	@Autowired
-	public EndProductService(EndProductRepository endProductRepository) {
+	public EndProductService(EndProductRepository endProductRepository, EntityManager entityManager) {
 		this.endProductRepository = endProductRepository;
+		this.entityManager = entityManager;
 	}
 	
 	public EndProduct addProduct(EndProduct product) {
@@ -34,6 +46,32 @@ public class EndProductService {
 	}
 	
 	//product basic searches
+	public EndProduct retrieveById(long id) {
+		return endProductRepository.findOne(id);
+	}
+	
+	public List<EndProduct> retrieveBySearch(String text, Pageable pageable) throws PageNotFoundException {
+		int pageNumber = pageable.getPageNumber() > 0 ? pageable.getPageNumber() - 1 : 0;
+		pageable = new PageRequest(pageNumber, pageable.getPageSize(), pageable.getSort());		
+		List<EndProduct> foundProducts = new ArrayList<>();
+		Page<EndProduct> page = endProductRepository.findAll(Specifications.where(EndProductSpecification.retrieveInSpecifiedColumns(text)), pageable);
+		page.forEach(foundProducts::add);
+		if (foundProducts.isEmpty()) {
+			throw new PageNotFoundException("No products found on page: " + pageable.getPageNumber() + ", with value of: " + text);
+		}
+		return foundProducts;
+	}
+	
+	public long retrieveCountBySpecification(String text) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<EndProduct> root = criteriaQuery.from(EndProduct.class);
+		criteriaQuery.select(criteriaBuilder.countDistinct(root));
+		Predicate restrictions = EndProductSpecification.retrieveInSpecifiedColumns(text).toPredicate(root, criteriaQuery, criteriaBuilder);
+		criteriaQuery.where(restrictions);
+		return entityManager.createQuery(criteriaQuery).getSingleResult();
+	}
+	
 	public EndProduct retrieveByName(String name) {
 		return endProductRepository.findByName(name);
 	}
