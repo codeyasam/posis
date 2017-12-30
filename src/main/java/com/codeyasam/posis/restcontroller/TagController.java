@@ -1,5 +1,6 @@
 package com.codeyasam.posis.restcontroller;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,7 +39,7 @@ public class TagController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.PUT)
-	public SingleDataResponse<TagDTO> addTag(Tag tag) {
+	public SingleDataResponse<TagDTO> addTag(@RequestBody Tag tag) {
 		SingleDataResponse<TagDTO> response = new SingleDataResponse<>();
 		Tag createdTag = tagService.addTag(tag);
 		response.setData(convertToDTO(createdTag));
@@ -47,7 +49,7 @@ public class TagController {
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
-	public SingleDataResponse<TagDTO> updateTag(Tag tag) {
+	public SingleDataResponse<TagDTO> updateTag(@RequestBody Tag tag) {
 		SingleDataResponse<TagDTO> response = new SingleDataResponse<>();
 		Tag updatedTag = tagService.updateTag(tag);
 		response.setData(convertToDTO(updatedTag));
@@ -82,6 +84,10 @@ public class TagController {
 	}
 	
 	private TagDTO convertToDTO(Tag tag) {
-		return modelMapper.map(tag, TagDTO.class);
+		TagDTO tagDTO = modelMapper.map(tag, TagDTO.class);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	    if (tag.getCreatedDate() != null) tagDTO.setCreatedDate(tag.getCreatedDate().format(formatter));
+	    if (tag.getLastModifiedDate() != null) tagDTO.setLastModifiedDate(tag.getLastModifiedDate().format(formatter));
+		return tagDTO;
 	}
 }
