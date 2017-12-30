@@ -111,7 +111,7 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByFirstNameContainingOrLastNameContaining(text, text, pageable);
 	}
 	
-	public List<EndUser> retrieveInAnyColumn(String text, Pageable pageable) throws PageNotFoundException {
+	public List<EndUser> retrieveInSpecifiedColumns(String text, Pageable pageable) throws PageNotFoundException {
 		int pageNumber = pageable.getPageNumber() > 0 ? pageable.getPageNumber() - 1 : 0;
 		pageable = new PageRequest(pageNumber, pageable.getPageSize(), pageable.getSort());
 		List<EndUser> foundUsers = new ArrayList<>();

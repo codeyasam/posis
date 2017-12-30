@@ -81,7 +81,7 @@ public class EndUserController {
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public MultipleDataResponse<EndUserDTO> retrieveUsersBySearch(@RequestParam(value="search", defaultValue="") String text, Pageable pageable) throws PageNotFoundException {
 		MultipleDataResponse<EndUserDTO> response = new MultipleDataResponse<>();
-		List<EndUserDTO> userList = userService.retrieveInAnyColumn(text, pageable)
+		List<EndUserDTO> userList = userService.retrieveInSpecifiedColumns(text, pageable)
 			.stream()
 			.map(user -> convertToDTO(user))
 			.collect(Collectors.toList());

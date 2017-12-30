@@ -70,7 +70,7 @@ public class EndUserIntegrationTest {
 	
 	@Test
 	public void retrieveInAllColumns() throws PageNotFoundException {	
-		List<EndUser> foundUsers = userService.retrieveInAnyColumn("%emm%", new PageRequest(0, 5));
+		List<EndUser> foundUsers = userService.retrieveInSpecifiedColumns("%emm%", new PageRequest(0, 5));
 		assertEquals(1, foundUsers.size());	
 	}
 	
@@ -82,12 +82,12 @@ public class EndUserIntegrationTest {
 	
 	@Test(expected=PageNotFoundException.class)
 	public void retrieveInAllColumnsWithPageNotFound() throws PageNotFoundException {
-		userService.retrieveInAnyColumn("emm", new PageRequest(0, 5));		
+		userService.retrieveInSpecifiedColumns("emm", new PageRequest(0, 5));		
 	}
 	
 	@Test
 	public void retrieveByFullName() throws PageNotFoundException {
-		List<EndUser> foundUsers = userService.retrieveInAnyColumn("emman yasa", new PageRequest(0, 5));
+		List<EndUser> foundUsers = userService.retrieveInSpecifiedColumns("emman yasa", new PageRequest(0, 5));
 		assertEquals(1, foundUsers.size());
 	}
 	
@@ -99,7 +99,7 @@ public class EndUserIntegrationTest {
 	
 	@Test
 	public void retrieveByFirstName() throws PageNotFoundException {
-		List<EndUser> foundUsers = userService.retrieveInAnyColumn("emman", new PageRequest(0, 5));
+		List<EndUser> foundUsers = userService.retrieveInSpecifiedColumns("emman", new PageRequest(0, 5));
 		assertEquals(1, foundUsers.size());		
 	}
 	
@@ -111,7 +111,7 @@ public class EndUserIntegrationTest {
 	
 	@Test
 	public void retrieveByLastName() throws PageNotFoundException {
-		List<EndUser> foundUsers = userService.retrieveInAnyColumn("yasa", new PageRequest(0, 5));
+		List<EndUser> foundUsers = userService.retrieveInSpecifiedColumns("yasa", new PageRequest(0, 5));
 		assertEquals(1, foundUsers.size());		
 	}
 	
@@ -123,7 +123,7 @@ public class EndUserIntegrationTest {
 	
 	@Test
 	public void retrieveAll() throws PageNotFoundException {
-		List<EndUser> foundUsers = userService.retrieveInAnyColumn("", new PageRequest(0, 5));
+		List<EndUser> foundUsers = userService.retrieveInSpecifiedColumns("", new PageRequest(0, 5));
 		assertEquals(2, foundUsers.size());
 	}
 	
