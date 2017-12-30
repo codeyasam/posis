@@ -34,6 +34,12 @@ public class ProductTypeServiceIntegrationTest {
 	}
 	
 	@Test
+	public void retrieveInSpecifiedColumnsWithCaseInsensitivity() throws PageNotFoundException {
+		List<ProductType> productTypeList = productTypeService.retrieveInSpecifiedColumns("Bag", new PageRequest(0, 5));
+		assertEquals(1, productTypeList.size());
+	}
+	
+	@Test
 	public void retrieveCountBySpecification() {
 		long count = productTypeService.retrieveCountBySpecification("");
 		assertEquals(3, count);

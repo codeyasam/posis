@@ -19,15 +19,16 @@ public class EndUserSpecification {
 		return (root, query, builder) -> {
 			Expression<String> fullNameExpFirstNameFirst = builder.concat(root.get("firstName"), " ");
 			fullNameExpFirstNameFirst = builder.concat(fullNameExpFirstNameFirst, root.get("lastName"));
+		
 			Expression<String> fullNameExpLastNameFirst  = builder.concat(root.get("lastName"), " ");
 			fullNameExpLastNameFirst = builder.concat(fullNameExpLastNameFirst, root.get("firstName"));
 			
 			return builder.or(
-				builder.like(fullNameExpFirstNameFirst, finalText),
-				builder.like(fullNameExpLastNameFirst, finalText),
-				builder.like(root.get("firstName"), finalText),
-				builder.like(root.get("lastName"), finalText),
-				builder.like(root.get("username"), finalText)
+				builder.like(builder.lower(fullNameExpFirstNameFirst), finalText.toLowerCase()),
+				builder.like(builder.lower(fullNameExpLastNameFirst), finalText.toLowerCase()),
+				builder.like(builder.lower(root.get("firstName")), finalText.toLowerCase()),
+				builder.like(builder.lower(root.get("lastName")), finalText.toLowerCase()),
+				builder.like(builder.lower(root.get("username")), finalText.toLowerCase())
 		);};
 	}
 }

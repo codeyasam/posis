@@ -15,7 +15,7 @@ public class ProductTypeSpecification {
 		final String finalText = text;
 		return (root, query, builder) -> {
 			return builder.or(
-				builder.like(root.get("name"), finalText)
+				builder.like(builder.lower(root.get("name")), finalText.toLowerCase())
 		);};		
 	}
 	

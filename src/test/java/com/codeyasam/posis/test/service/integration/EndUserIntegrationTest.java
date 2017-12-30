@@ -75,6 +75,12 @@ public class EndUserIntegrationTest {
 	}
 	
 	@Test
+	public void retrieveUserBySearchWithCaseInsensitivity() throws PageNotFoundException {
+		List<EndUser> foundUsers = userService.retrieveInSpecifiedColumns("%Emm%", new PageRequest(0, 5));
+		assertEquals(1, foundUsers.size());
+	}
+ 	
+	@Test
 	public void retrieveCountInAllColumns() {
 		long count = userService.retrieveCountBySpecification("%emm%");
 		assertEquals(1, count);
