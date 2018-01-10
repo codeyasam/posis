@@ -13,10 +13,18 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.codeyasam.posis.domain.security.EndUser;
 import com.codeyasam.posis.domain.security.Role;
@@ -33,6 +41,9 @@ public class EndUserControllerIntegrationTest {
 	
 	@Autowired
 	private EndUserController endUserController;
+	
+	@Autowired
+	private TestRestTemplate restTemplate;
 	
 	@Test
 	public void retrieveAllPaginatedUser() throws PageNotFoundException, UnsupportedEncodingException {
@@ -67,4 +78,20 @@ public class EndUserControllerIntegrationTest {
 		assertEquals(HttpStatus.CREATED.value(), response.getStatus());
 	}
 	
+	@Test
+	@Transactional
+	public void disableUser() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+		map.add("username", "codeyasam");
+
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);		
+		SingleDataResponse<EndUserDTO> response = restTemplate.exchange("/users/disableUser",
+				HttpMethod.POST,
+				request,
+				new ParameterizedTypeReference<SingleDataResponse<EndUserDTO>>() {}).getBody();
+		assertEquals("codeyasam", response.getData().getUsername());
+	}
 }
