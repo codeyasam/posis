@@ -149,4 +149,13 @@ public class EndUserIntegrationTest {
 	public void retrieveByUsernameWithUserNotFoundException() throws UserNotFoundException {
 		userService.retrieveByUsername("randomq341");
 	}
+	
+	@Test
+	@Transactional
+	public void disableUser() throws UserNotFoundException {
+		EndUser user = new EndUser();
+		user.setUsername("codeyasam");
+		user = userService.disableUser(user);
+		assertEquals("codeyasam", user.getUsername());
+	}
 }
