@@ -23,7 +23,7 @@ import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.service.EndProductService;
 
 @RestController
-@RequestMapping("/endproduct")
+@RequestMapping("/products")
 public class EndProductController {
 	
 	private EndProductService endProductService;
@@ -77,6 +77,7 @@ public class EndProductController {
 				.map(product -> convertToDTO(product))
 				.collect(Collectors.toList());
 		
+		response.setTotal(endProductService.retrieveCountBySpecification(text));
 		response.setData(productDTOList);
 		response.setPrompt("Product Successfully Retrieve by search.");
 		response.setStatus(HttpStatus.OK.value());
@@ -96,11 +97,6 @@ public class EndProductController {
 	@RequestMapping(value="/searchByProductType", method=RequestMethod.GET)
 	public List<EndProduct> retrieveByProductType(@RequestParam String type) {
 		return endProductService.retrieveByProductType(type);
-	}
-		
-	@RequestMapping(value="/", method=RequestMethod.GET)
-	public List<EndProduct> retrieveAllProductType(Pageable pageable) {
-		return endProductService.retrieveAllProduct(pageable);
 	}	
 	
 	private EndProductDTO convertToDTO(EndProduct product) {
