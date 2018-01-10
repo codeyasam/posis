@@ -34,7 +34,7 @@ Ext.define('Posis.view.ProductTypesList', {
 	alias: 'widget.producttypeslist',
 	id: 'producttypeslist',
 	store: 'ProductTypeStore',
-	height: 250,
+	height: 450,
 	scrollable: true,
 	pageSize: 5,
 

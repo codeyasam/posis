@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Chulien Posis</title>
-		<link href = "https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-classic/resources/theme-classic-all.css" 
+		<link href = "https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-triton/resources/theme-triton-all.css" 
 		rel = "stylesheet" />         
 		
 		<script type = "text/javascript" 
@@ -10,13 +10,16 @@
 	
 		<script type="text/javascript" th:src="@{/js/sampleData.js}"></script>
 		<script type="text/javascript" th:src="@{/js/usermanagement.js}"></script> 
-		<script type="text/javascript" th:src="@{/js/producttypemanagement.js}"></script> 
-
-	<!--
+		<script type="text/javascript" th:src="@{/js/producttypemanagement.js}"></script>
+		<script type="text/javascript" th:src="@{/js/tagsmanagement.js}"></script>
+		<script type="text/javascript" th:src="@{/js/productmanagement.js}"></script>
+		<script type="text/javascript" th:src="@{/js/inventorymanagement.js}"></script>
+<!--
 		<script type="text/javascript" src="../static/js/sampleData.js"></script>
 		<script type="text/javascript" src="../static/js/usermanagement.js"></script>	
-		<script type="text/javascript" src="../static/js/producttypemanagement.js"></script>	-->
-
+		<script type="text/javascript" src="../static/js/producttypemanagement.js"></script>
+		<script type="text/javascript" src="../static/js/tagsmanagement.js"></script>	
+		<script type="text/javascript" src="../static/js/productmanagement.js"></script> -->
 	
 		<script type="text/javascript">
 			Ext.define('Posis.view.MainContainer', {
@@ -24,7 +27,7 @@
 				alias: 'widget.maincontainer',
 				id: 'mainContainer',
 				fullscreen: true,
-				activeTab: 2,
+				activeTab: 3,
 				listeners: {
 					tabchange: function(panel, tab) {
 						panel.updateLayout();
@@ -43,23 +46,45 @@
 			        }	 
 			    }, {
 			    	title: 'MANAGE PRODUCT CATEGORIES',
-			    	html: '<div id="manageProductType"></div>',
+			    	html: '<div id="manageProductTypes"></div>',
 			    	listeners: {
 			    		render: function() {
-			    			Ext.widget('producttypeslist', {renderTo: 'manageProductType'});
+			    			Ext.widget('producttypeslist', {renderTo: 'manageProductTypes'});
 			    		}
 			    	}
 			    }, {
-			    	title: 'TEST PANEL',
-			    	html: '<div id="testpanel"></div>'
+			    	title: 'MANAGE PRODUCT',
+			    	html: '<div id="manageProducts"></div>',
+			    	listeners: {
+			    		render: function() {
+			    			Ext.widget('productslist', {renderTo: 'manageProducts'});
+			    		}
+			    	}
+			    }, {
+			    	title: 'MANAGE INVENTORY',
+			    	html: '<div id="manageInventories"></div>',
+			    	listeners: {
+			    		render: function() {
+			    			Ext.widget('inventories', {renderTo: 'manageInventories'});
+			    		}
+			    	}
+			    }, {
+			    	title: 'MANAGE TAGS',
+			    	html: '<div id="manageTags"></div>',
+			    	listeners: {
+			    		render: function() {
+			    			Ext.widget('tagslist', { renderTo: 'manageTags' });
+			    		}
+			    	}
 			    }]
 			});
 
 			Ext.onReady(function() {
 				Ext.application({
 					name: 'Posis',
-					stores: ['UserStore', 'ProductTypeStore'],
-					controllers: ['UserController', 'ProductTypeController'],
+					stores: ['UserStore', 'ProductTypeStore', 'TagStore', 'ProductStore'],
+					controllers: ['UserController', 'ProductTypeController', 'TagController',
+						'ProductController'],
 					launch: function() {
 						var mainpanel = new Posis.view.MainContainer({
 							renderTo: 'container'

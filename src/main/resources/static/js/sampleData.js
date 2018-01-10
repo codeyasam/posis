@@ -23,4 +23,17 @@ var productTypeData = [{
 }, {
 	"id": 2,
 	"name": "Owl"
-}]
+}];
+
+var productData = [{
+	"id": 1,
+	"name": "Nimbus 2000",
+	"productType": {
+		"id": 7,
+		"name": "broomstick"
+	},
+	"tags": [{
+		"id": 1, 
+		"name": "tag1"
+	}]
+}];

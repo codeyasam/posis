@@ -43,7 +43,7 @@ Ext.define('Posis.view.UsersList', {
 	alias: 'widget.userslist',
 	id: 'userslist',
 	store: 'UserStore',
-	height: 250,
+	height: 450,
 	scrollable: true,
 	pageSize: 5,
 
@@ -85,6 +85,7 @@ Ext.define('Posis.view.UsersList', {
 	}, {
 		header: 'ROLES',
 		renderer: function(value, metaData, record, rowId, colId, store, view) {
+			console.log(record);
 			values = [];
 			record.roles().each(function(role) {
 				values.push(role.get('role'));
@@ -108,41 +109,10 @@ Ext.define('Posis.view.UsersList', {
 	}, {
 		header: 'ACTION',
 		renderer: function(value, metaData, record) {
-			var id = Ext.id();
 			if (record.get('status') == 'ENABLED') {
-				Ext.defer(function() {
-					Ext.widget('image', {
-						renderTo: id,
-						name: 'disableUser',
-						src: '/posis/images/disable.png',
-						height: 13,
-						width: 13,
-						listeners: {
-							afterrender: function(me) {
-								me.getEl().on('click', function() {
-									var grid = Ext.ComponentQuery.query('userslist')[0];
-									if (grid) {
-										var sm = grid.getSelectionModel();
-										var rs = sm.getSelection();
-										if (!rs.length) {
-											Ext.Msg.alert('Info', 'No User is Selected');
-											return;
-										}
-										Ext.Msg.confirm('Disable User', 
-											'Are you sure you want to disable this user?',
-											function(button) {
-												if (button == 'yes') {
-													disableUser(record.data.username);
-												}
-										});
-									}
-								});
-							}
-						}
-					});
-				}, 50);
-				return Ext.String.format('<div id="{0}"></div>', id);
+				return '<img src="/posis/images/disable.png" width="13" height="13"/>';
 			}
+			return "";
 		}
 	}],
     bbar: {
@@ -166,8 +136,31 @@ Ext.define('Posis.view.UsersList', {
         		}, 500);
         	}
         }
+    },
+    listeners: {
+    	cellclick: function(view, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+    		if (e.getTarget('img')) {
+    			console.log("image clicked");
+				var grid = Ext.ComponentQuery.query('userslist')[0];
+				if (grid) {
+					var sm = grid.getSelectionModel();
+					var rs = sm.getSelection();
+					if (!rs.length) {
+						Ext.Msg.alert('Info', 'No User is Selected');
+						return;
+					}
+					Ext.Msg.confirm('Disable User', 
+						'Are you sure you want to disable this user?',
+						function(button) {
+							if (button == 'yes') {
+								console.log(record.get('username'));
+								disableUser(record.get('username'));
+							}
+					});
+				}    			
+    		}
+    	}
     }	
-
 });
 
 function disableUser(username) {
@@ -180,7 +173,7 @@ function disableUser(username) {
 		success: function(response) {
 			var jsonResponse = JSON.parse(response.responseText);				
 			if (jsonResponse.status == 200) {
-				var userData = jsonResponse.data;
+				var userData = {"username":jsonResponse.data.username};
 				userData.status = 'DISABLED';
 				Ext.Ajax.request({
 					url: '/posis/users/disableUser',
