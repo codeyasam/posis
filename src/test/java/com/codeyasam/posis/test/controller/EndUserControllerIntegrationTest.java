@@ -3,6 +3,7 @@ package com.codeyasam.posis.test.controller;
 import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,8 +24,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import com.codeyasam.posis.domain.security.EndUser;
 import com.codeyasam.posis.domain.security.Role;
@@ -82,16 +81,17 @@ public class EndUserControllerIntegrationTest {
 	@Transactional
 	public void disableUser() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-		MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-		map.add("username", "codeyasam");
-
-		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);		
+		EndUser user = new EndUser();
+		user.setUsername("codeyasam");
+		HttpEntity<EndUser> request = new HttpEntity<>(user, headers);	
 		SingleDataResponse<EndUserDTO> response = restTemplate.exchange("/users/disableUser",
 				HttpMethod.POST,
 				request,
 				new ParameterizedTypeReference<SingleDataResponse<EndUserDTO>>() {}).getBody();
+		System.out.println(response.getStatus());
 		assertEquals("codeyasam", response.getData().getUsername());
 	}
 }

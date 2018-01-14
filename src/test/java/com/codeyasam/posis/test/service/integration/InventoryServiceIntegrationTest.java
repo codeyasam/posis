@@ -11,7 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.codeyasam.posis.domain.EndProduct;
 import com.codeyasam.posis.domain.Inventory;
 import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.service.InventoryService;
@@ -58,7 +60,15 @@ public class InventoryServiceIntegrationTest {
 		inventoryService.retrieveByProductNameContaining("i", new PageRequest(1, 4));
 	}
 	
-
+	@Test
+	@Transactional
+	public void updateInventory() {
+		Inventory inventory = inventoryService.retrieveById(1);
+		EndProduct endProduct = new EndProduct();
+		endProduct.setId(1);
+		inventory.setProduct(endProduct);
+		inventory.setAcquiredPrice(200);
+		inventory = inventoryService.saveInventory(inventory);
+		assertEquals(200, (int)inventory.getAcquiredPrice());
+	}
 }
-
-

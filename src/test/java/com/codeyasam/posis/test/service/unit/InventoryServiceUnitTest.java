@@ -10,6 +10,8 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
@@ -26,11 +28,13 @@ public class InventoryServiceUnitTest {
 	
 	private InventoryService inventoryService;
 	private InventoryRepository inventoryRepositoryMock;
+	private EntityManager entityManager;
 	
 	@Before
 	public void setup() {
 		inventoryRepositoryMock = mock(InventoryRepository.class);
-		inventoryService = new InventoryService(inventoryRepositoryMock);
+		entityManager = mock(EntityManager.class);
+		inventoryService = new InventoryService(inventoryRepositoryMock, entityManager);
 	}
 	
 	@Test

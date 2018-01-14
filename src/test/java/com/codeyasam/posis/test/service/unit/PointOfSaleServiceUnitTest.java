@@ -1,5 +1,7 @@
 package com.codeyasam.posis.test.service.unit;
 
+import javax.persistence.EntityManager;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,13 +21,15 @@ public class PointOfSaleServiceUnitTest {
 	private PointOfSaleRepository pointOfSaleRepositoryMock;
 	private InventoryService inventoryService;
 	private InventoryRepository inventoryRepositoryMock;
+	private EntityManager entityManager;
 	
 	@Before
 	public void setUp() {
 		pointOfSaleRepositoryMock = Mockito.mock(PointOfSaleRepository.class);
 		inventoryRepositoryMock   = Mockito.mock(InventoryRepository.class);
+		entityManager = Mockito.mock(EntityManager.class);
 		pointOfSaleService = new PointOfSaleService(pointOfSaleRepositoryMock, inventoryRepositoryMock);
-		inventoryService = new InventoryService(inventoryRepositoryMock);
+		inventoryService = new InventoryService(inventoryRepositoryMock, entityManager);
 		setupInventory();
 		setupMockedPos();
 	}
