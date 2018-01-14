@@ -1,5 +1,8 @@
 var PRODUCT_PAGE_SIZE = 5;
 var PRODUCT_URL = '/posis/products/?size=' + PRODUCT_PAGE_SIZE + '&sort=id';
+var productData = {};
+productData.productTags = [];
+productData.productType = {};
 
 Ext.define('Posis.model.ProductModel', {
 	extend: 'Ext.data.Model',
@@ -109,7 +112,7 @@ Ext.define('Posis.view.ProductsList', {
         listeners: {
         	beforechange: function(pagingtoolbar, page, eOpts) {
         		var searchText = Ext.getCmp('productSearchField').getValue();
-        		productBufferedStore.getProxy().url = PRODUCT_URL;
+        		productBufferedStore.getProxy().url = PRODUCT_URL + '&search=' + encodeURIComponent(searchText);
         		productBufferedStore.load();
         		var productsList = Ext.getCmp('productslist');
         		var mainContainer = Ext.getCmp('mainContainer');
@@ -165,10 +168,13 @@ Ext.define('Posis.view.ProductForm', {
         		}, 500);							
 			},
 			afterRender: function(combo) {
+				console.log("combo box renderes");
 				if (!combo.isExpanded) {
-					productTypeBufferedStore.getProxy().url = '/posis/endproduct/type/?size=5&sort=name';
+					var searchText = productData.productType.name == undefined ? "" : productData.productType.name; 
+					productTypeBufferedStore.getProxy().url = '/posis/endproduct/type/?size=5&sort=name&search=' + encodeURIComponent(searchText);
 					productTypeBufferedStore.load();
 					combo.bindStore(productTypeBufferedStore);
+					Ext.getCmp('productCategoryComboBox').setValue(productData.productType.id);					
 				}
 			}
 		}
@@ -195,6 +201,20 @@ Ext.define('Posis.view.ProductForm', {
 				setTimeout(function() {
 					tagfield.bindStore(tagBufferedStore);
 				}, 500);				
+			},
+			afterRender: function(tagfield) {
+				if (!tagfield.isExpanded) {	
+					var productId = productData.id;
+					if (productId != undefined) tagBufferedStore.getProxy().url = '/posis/products/tags?productId=' + encodeURIComponent(productData.id);
+					else tagBufferedStore.getProxy().url = '/posis/tags/?size=5&sort=name';
+					tagBufferedStore.load();
+					tagfield.bindStore(tagBufferedStore);								
+					var tagsValues = [];
+					productData.productTags.forEach(function(eachTag) {
+						tagsValues.push(eachTag.id);
+					});
+					Ext.getCmp('productTags').setValue(tagsValues);						
+				}				
 			}
 		}
 	}, {
@@ -205,7 +225,13 @@ Ext.define('Posis.view.ProductForm', {
 	buttons: [{
 		id: 'productFormOkButton',
 		text: 'SUBMIT'
-	}]	
+	}],
+	listeners: {
+		afterRender: function(form) {
+			Ext.getCmp('productName').setValue(productData.name);	
+			Ext.getCmp('productId').setValue(productData.id);			
+		}
+	}	
 });
 
 Ext.define('Posis.controller.ProductController', {
@@ -241,6 +267,9 @@ Ext.define('Posis.controller.ProductController', {
 		});
 	},
 	showProductForm: function() {
+		productData = {};
+		productData.productTags = [];
+		productData.productType = {};		
 		var productform = new Posis.view.ProductForm();
 		var productformwindow = this.getProductFormWindow({
 			title: 'Create Product',
@@ -248,6 +277,7 @@ Ext.define('Posis.controller.ProductController', {
 		});
 		Ext.getCmp('productFormOkButton').action = 'add';
 		productformwindow.show();
+		productform.reset();
 	},
 	onRowDblClick: function(metaData, record, item, index) {
 		var productId = record.data.id;
@@ -264,16 +294,18 @@ Ext.define('Posis.controller.ProductController', {
 			success: function(response) {
 				var jsonResponse = JSON.parse(response.responseText);
 				if (jsonResponse.status == 200) {
-					Ext.getCmp('productName').setValue(jsonResponse.data.name);
-					Ext.getCmp('productCategoryComboBox').setValue(jsonResponse.data.productType.id);
-					var tagsValues = [];
+					productData = {};
+					productData.productTags = [];
+					productData.productType = {};
+					productData.id = jsonResponse.data.id;
+					productData.name = jsonResponse.data.name;
+					productData.productType.id = jsonResponse.data.productType.id;
+					productData.productType.name = jsonResponse.data.productType.name;
 					jsonResponse.data.productTags.forEach(function(eachTag) {
-						tagsValues.push(eachTag.id);
+						productData.productTags.push(eachTag);
 					});
-					Ext.getCmp('productTags').setValue(tagsValues);		
-					Ext.getCmp('productId').setValue(productId);
-					Ext.getCmp('productFormOkButton').action = 'edit';
 					productformwindow.show();			
+					Ext.getCmp('productFormOkButton').action = 'edit';
 				}
 			}
 		});
@@ -284,7 +316,7 @@ Ext.define('Posis.controller.ProductController', {
 		var productformdata = productform.getValues();
 		var pagingtoolbar = Ext.getCmp('productPaingToolbar');
 		if (productform.isValid()) {
-			var productData = {};
+			productData = {};
 			productData.productTags = [];
 			productData.productType = {};
 			productData.name = productformdata.name;
@@ -359,7 +391,7 @@ Ext.define('Posis.controller.ProductController', {
 		var productsList = this.getProductsList();
 		setTimeout(function() {
 			productsList.reconfigure(productStore);
-			productBufferedStore.totalCount = productsList.getTotalCount();
+			productBufferedStore.totalCount = productStore.getTotalCount();
 			pagingtoolbar.onLoad();
 		}, 500);
 	}

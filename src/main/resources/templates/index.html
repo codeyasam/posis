@@ -27,7 +27,7 @@
 				alias: 'widget.maincontainer',
 				id: 'mainContainer',
 				fullscreen: true,
-				activeTab: 3,
+				activeTab: 4,
 				listeners: {
 					tabchange: function(panel, tab) {
 						panel.updateLayout();
@@ -65,7 +65,15 @@
 			    	html: '<div id="manageInventories"></div>',
 			    	listeners: {
 			    		render: function() {
-			    			Ext.widget('inventories', {renderTo: 'manageInventories'});
+			    			Ext.widget('inventorieslist', {renderTo: 'manageInventories'});
+			    		}
+			    	}
+			    }, {
+			    	title: 'POINT OF SALE',
+			    	html: '<div id="managePointOfSales"></div>',
+			    	listeners: {
+			    		render: function() {
+			    			
 			    		}
 			    	}
 			    }, {
@@ -82,9 +90,9 @@
 			Ext.onReady(function() {
 				Ext.application({
 					name: 'Posis',
-					stores: ['UserStore', 'ProductTypeStore', 'TagStore', 'ProductStore'],
+					stores: ['UserStore', 'ProductTypeStore', 'TagStore', 'ProductStore', 'InventoryStore'],
 					controllers: ['UserController', 'ProductTypeController', 'TagController',
-						'ProductController'],
+						'ProductController', 'InventoryController'],
 					launch: function() {
 						var mainpanel = new Posis.view.MainContainer({
 							renderTo: 'container'
