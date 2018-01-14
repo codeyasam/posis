@@ -2,7 +2,9 @@ package com.codeyasam.posis.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.codeyasam.posis.domain.Inventory;
@@ -15,4 +17,6 @@ public interface InventoryRepository extends PagingAndSortingRepository<Inventor
 	public List<Inventory> findByProductNameContaining(String name, Pageable pageable);
 	public Inventory findById(long id);
 	public Inventory findFirstByProductIdOrderByCreatedDate(long id);
+	
+	public Page<Inventory> findAll(Specification<Inventory> specification, Pageable pageable);
 }
