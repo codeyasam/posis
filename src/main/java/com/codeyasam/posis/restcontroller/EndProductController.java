@@ -19,6 +19,7 @@ import com.codeyasam.posis.domain.EndProduct;
 import com.codeyasam.posis.dto.EndProductDTO;
 import com.codeyasam.posis.dto.MultipleDataResponse;
 import com.codeyasam.posis.dto.SingleDataResponse;
+import com.codeyasam.posis.dto.TagDTO;
 import com.codeyasam.posis.exception.PageNotFoundException;
 import com.codeyasam.posis.service.EndProductService;
 
@@ -80,6 +81,20 @@ public class EndProductController {
 		response.setTotal(endProductService.retrieveCountBySpecification(text));
 		response.setData(productDTOList);
 		response.setPrompt("Product Successfully Retrieve by search.");
+		response.setStatus(HttpStatus.OK.value());
+		return response;
+	}
+	
+	@RequestMapping(value="/tags", method=RequestMethod.GET)
+	public MultipleDataResponse<TagDTO> retrieveTags(@RequestParam long productId) {
+		MultipleDataResponse<TagDTO> response = new MultipleDataResponse<>();
+		EndProduct product = endProductService.retrieveById(productId);
+		List<TagDTO> tagDTOList = product.getProductTags()
+				.stream()
+				.map(tag -> modelMapper.map(tag, TagDTO.class))
+				.collect(Collectors.toList());
+		response.setData(tagDTOList);
+		response.setPrompt("Successfully retrieved owned tags");
 		response.setStatus(HttpStatus.OK.value());
 		return response;
 	}
